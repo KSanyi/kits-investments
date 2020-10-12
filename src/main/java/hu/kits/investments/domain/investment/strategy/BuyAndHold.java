@@ -7,12 +7,12 @@ import java.time.LocalDate;
 import java.util.List;
 
 import hu.kits.investments.domain.Asset;
-import hu.kits.investments.domain.PortfolioSnapshot;
-import hu.kits.investments.domain.TradeOrder;
 import hu.kits.investments.domain.investment.Allocation;
 import hu.kits.investments.domain.investment.InvestmentStrategy;
 import hu.kits.investments.domain.marketdata.AssetPrices;
 import hu.kits.investments.domain.marketdata.PriceHistory;
+import hu.kits.investments.domain.portfolio.PortfolioSnapshot;
+import hu.kits.investments.domain.portfolio.TradeOrder;
 
 public class BuyAndHold implements InvestmentStrategy {
 
@@ -33,16 +33,16 @@ public class BuyAndHold implements InvestmentStrategy {
         AssetPrices assetPrices = priceHistory.assetPricesAt(startDate);
         
         return allocation.assets().stream()
-                .map(asset -> createTradeOrder(asset, allocation.weightOf(asset) / 100.0, assetPrices, cash))
+                .map(asset -> createTradeOrder(startDate, asset, allocation.weightOf(asset) / 100.0, assetPrices, cash))
                 .collect(toList());
     }
     
-    private TradeOrder createTradeOrder(Asset asset, double weight, AssetPrices assetPrices, int cash) {
+    private static TradeOrder createTradeOrder(LocalDate date, Asset asset, double weight, AssetPrices assetPrices, int cash) {
        
-        double unitPrice = assetPrices.price(asset);
+        Double unitPrice = assetPrices.price(asset).orElseThrow(() -> new IllegalArgumentException("Can no find price for " + asset.ticker() + " for " + date));
         int quantity = (int)Math.floor(cash * weight / unitPrice);
         
-        return new TradeOrder(asset, quantity, unitPrice);
+        return new TradeOrder(date, asset, quantity, unitPrice);
     }
     
     @Override

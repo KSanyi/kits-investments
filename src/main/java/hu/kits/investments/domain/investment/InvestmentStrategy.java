@@ -3,9 +3,9 @@ package hu.kits.investments.domain.investment;
 import java.time.LocalDate;
 import java.util.List;
 
-import hu.kits.investments.domain.PortfolioSnapshot;
-import hu.kits.investments.domain.TradeOrder;
 import hu.kits.investments.domain.marketdata.PriceHistory;
+import hu.kits.investments.domain.portfolio.PortfolioSnapshot;
+import hu.kits.investments.domain.portfolio.TradeOrder;
 
 public interface InvestmentStrategy {
 

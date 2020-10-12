@@ -45,13 +45,13 @@ public class PriceDataJdbiRepository implements PriceDataRepository {
             handle.createQuery(sql).map((rs, ctx) -> mapToPriceData(rs)).list());
         
         Map<Asset, Map<LocalDate, Double>> priceMap = priceDataList.stream()
-                .collect(groupingBy(p -> p.asset, 
-                        toMap(p -> p.date, p -> p.price)));
+                .collect(groupingBy(PriceData::asset, 
+                        toMap(PriceData::date, PriceData::price)));
         
         return new PriceHistory(priceMap);
     }
     
-    private PriceData mapToPriceData(ResultSet rs) throws SQLException {
+    private static PriceData mapToPriceData(ResultSet rs) throws SQLException {
         return new PriceData(
                 new Asset(rs.getString(COLUMN_TICKER)),
                 rs.getDate(COLUMN_DATE).toLocalDate(),
@@ -61,9 +61,9 @@ public class PriceDataJdbiRepository implements PriceDataRepository {
     @Override
     public boolean savePriceData(PriceData priceData) {
         Map<String, Object> values = new HashMap<>();
-        values.put(COLUMN_TICKER, priceData.asset.ticker);
-        values.put(COLUMN_DATE, priceData.date);
-        values.put(COLUMN_CLOSE_PRICE, priceData.price);
+        values.put(COLUMN_TICKER, priceData.asset().ticker());
+        values.put(COLUMN_DATE, priceData.date());
+        values.put(COLUMN_CLOSE_PRICE, priceData.price());
         
         try {
             jdbi.withHandle(handle -> JdbiUtil.createInsert(handle, TABLE_PRICE_DATA, values).execute());
@@ -71,7 +71,7 @@ public class PriceDataJdbiRepository implements PriceDataRepository {
             return true;
         } catch(Exception ex) {
             if(ex.getCause() instanceof SQLIntegrityConstraintViolationException) {
-                logger.info("Already have price data for '{}' for {}", priceData.asset, priceData.date);
+                logger.info("Already have price data for '{}' for {}", priceData.asset(), priceData.date());
                 return false;
             } else {
                 throw new RuntimeException(ex);

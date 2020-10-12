@@ -10,6 +10,9 @@ import org.slf4j.LoggerFactory;
 import hu.kits.investments.common.DateRange;
 import hu.kits.investments.domain.investment.InvestmentStrategy;
 import hu.kits.investments.domain.marketdata.PriceHistory;
+import hu.kits.investments.domain.portfolio.Portfolio;
+import hu.kits.investments.domain.portfolio.PortfolioSnapshot;
+import hu.kits.investments.domain.portfolio.TradeOrder;
 
 public class BackTester {
 
@@ -43,15 +46,15 @@ public class BackTester {
         
         LocalDate evaluationDate = dateRange.to.plusDays(1);
         
-        int endValue = portfolio.value(priceHistory.assetPricesAt(evaluationDate));
+        int endValue = portfolio.portfolioValue(priceHistory.assetPricesAt(evaluationDate));
         
         return new InvestmentStats(dateRange, startingMoney, endValue);
     }
 
-    private void execureTradeOrders(Portfolio portfolio, List<TradeOrder> tradeOrders) {
+    private static void execureTradeOrders(Portfolio portfolio, List<TradeOrder> tradeOrders) {
         
         for(TradeOrder tradeOrder : tradeOrders) {
-            portfolio.buy(tradeOrder.asset, tradeOrder.quantity, tradeOrder.price());
+            portfolio.buy(tradeOrder.date(), tradeOrder.asset(), tradeOrder.quantity(), tradeOrder.unitPrice());
         }
     }
     

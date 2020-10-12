@@ -2,7 +2,6 @@ package hu.kits.investments.infrastructure.marketdata.yahoo;
 
 import static java.util.stream.Collectors.toList;
 
-import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -33,11 +32,16 @@ public class YahooPriceDataSource implements PriceDataSource {
         
         try {
             Stock stock = YahooFinance.get(ticker, toCalendar(dateRange.from), toCalendar(dateRange.to), Interval.DAILY);
-            return stock.getHistory().stream()
-                    .map(YahooPriceDataSource::getPriceData)
-                    .flatMap(Optional::stream)
-                    .collect(toList());
-        } catch (IOException ex) {
+            if(stock != null) {
+                return stock.getHistory().stream()
+                        .map(YahooPriceDataSource::getPriceData)
+                        .flatMap(Optional::stream)
+                        .collect(toList());    
+            } else {
+                logger.error("No price data found for: " + ticker);
+                return List.of();
+            }
+        } catch (Exception ex) {
             logger.error("Error geting price data for {} {}: {}", ticker, dateRange, ex.getMessage());
             return Collections.emptyList();
         }

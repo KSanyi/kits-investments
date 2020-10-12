@@ -5,10 +5,10 @@ import static java.util.Collections.emptyList;
 import java.time.LocalDate;
 import java.util.List;
 
-import hu.kits.investments.domain.PortfolioSnapshot;
-import hu.kits.investments.domain.TradeOrder;
 import hu.kits.investments.domain.investment.InvestmentStrategy;
 import hu.kits.investments.domain.marketdata.PriceHistory;
+import hu.kits.investments.domain.portfolio.PortfolioSnapshot;
+import hu.kits.investments.domain.portfolio.TradeOrder;
 
 public class NeverInvest implements InvestmentStrategy {
 

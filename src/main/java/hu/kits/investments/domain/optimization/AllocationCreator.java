@@ -20,28 +20,27 @@ public class AllocationCreator {
         return allocationMaps.stream().map(Allocation::new).collect(toList());
     }
     
-    private static List<Map<Asset, Integer>> createAllocations(List<Asset> assets, int step, int sum) {
+    private static List<Map<Asset, Integer>> createAllocations(List<Asset> assets, int stepPercent, int sum) {
         
         Asset asset = assets.get(0);
+        List<Asset> remainingAssets = tailOfAssets(assets);
         
          if(assets.size() == 1) {
              return List.of(Map.of(asset, sum));
          }
          
-         int weight = 0;
          List<Map<Asset, Integer>> allAllocations = new ArrayList<>();
-         while(weight <= sum) {
-             List<Map<Asset, Integer>> allocations = createAllocations(removeAsset(assets, asset), step, sum - weight);
+         for(int weight=0;weight<=sum;weight+=stepPercent) {
+             List<Map<Asset, Integer>> allocations = createAllocations(remainingAssets, stepPercent, sum - weight);
              allocations = addEntryToAllocations(allocations, asset, weight);
              allAllocations.addAll(allocations);
-             weight += step;
          }
          
          return allAllocations;
     }
     
-    private static List<Asset> removeAsset(List<Asset> assets, Asset assetToRemove) {
-        return assets.stream().filter(asset -> !asset.equals(assetToRemove)).collect(toList());
+    private static List<Asset> tailOfAssets(List<Asset> assets) {
+        return assets.subList(1, assets.size());
     }
     
     private static List<Map<Asset, Integer>> addEntryToAllocations(List<Map<Asset, Integer>> allocations, Asset asset, int weight) {

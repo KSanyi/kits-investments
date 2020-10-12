@@ -4,23 +4,6 @@ import java.time.LocalDate;
 
 import hu.kits.investments.domain.Asset;
 
-public class PriceData {
+public record PriceData(Asset asset, LocalDate date, double price) {
 
-    public final Asset asset;
-    
-    public final LocalDate date;
-    
-    public final double price;
-
-    public PriceData(Asset asset, LocalDate date, double price) {
-        this.asset = asset;
-        this.date = date;
-        this.price = price;
-    }
-    
-    @Override
-    public String toString() {
-        return asset + " " +  date + ": " + price;
-    }
-    
 }

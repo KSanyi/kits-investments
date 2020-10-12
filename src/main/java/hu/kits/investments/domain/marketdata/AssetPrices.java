@@ -1,6 +1,7 @@
 package hu.kits.investments.domain.marketdata;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import hu.kits.investments.domain.Asset;
@@ -13,8 +14,8 @@ public class AssetPrices {
         this.priceMap = priceMap;
     }
     
-    public double price(Asset asset) {
-        return priceMap.get(asset);
+    public Optional<Double> price(Asset asset) {
+        return Optional.ofNullable(priceMap.get(asset));
     }
     
     public Set<Asset> tickers() {

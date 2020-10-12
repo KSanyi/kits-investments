@@ -1,6 +1,7 @@
 package hu.kits.investments.domain.marketdata;
 
 import static java.util.Collections.emptyMap;
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -8,9 +9,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 import java.util.Optional;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 import hu.kits.investments.common.DateRange;
 import hu.kits.investments.domain.Asset;
@@ -23,16 +23,17 @@ public class PriceHistory {
         this.priceMap = Map.copyOf(priceMap);
     }
     
-    public Set<Asset> assets() {
-        return priceMap.keySet();
+    public List<Asset> assets() {
+        return priceMap.keySet().stream().sorted(comparing(Asset::ticker)).collect(toList());
     }
     
     public Optional<Double> findPrice(Asset asset, LocalDate date) {
         
-        Double price = priceMap.getOrDefault(asset, emptyMap()).get(date);
+        Map<LocalDate, Double> priceMapForAsset = priceMap.getOrDefault(asset, Map.of());
+        Double price = priceMapForAsset.get(date);
         int counter = 1;
         while(price == null && counter < 10) {
-            price = priceMap.getOrDefault(asset, emptyMap()).get(date.minusDays(counter));
+            price = priceMapForAsset.get(date.minusDays(counter));
             counter++;
         }
         return Optional.ofNullable(price);
@@ -93,6 +94,14 @@ public class PriceHistory {
                 }
             }
         };
+    }
+    
+    public String printStats() {
+        return priceMap.entrySet().stream()
+            .collect(toMap(e -> e.getKey(), e -> e.getValue().size()))
+            .entrySet().stream()
+            .map(e -> e.getKey() + ": " + e.getValue() + " entries")
+            .collect(Collectors.joining("\n"));
     }
 
 }
