@@ -12,6 +12,8 @@ import hu.kits.investments.domain.investment.InvestmentStrategy;
 import hu.kits.investments.domain.marketdata.PriceHistory;
 import hu.kits.investments.domain.portfolio.Portfolio;
 import hu.kits.investments.domain.portfolio.PortfolioSnapshot;
+import hu.kits.investments.domain.portfolio.PortfolioStats;
+import hu.kits.investments.domain.portfolio.PortfolioStatsCreator;
 import hu.kits.investments.domain.portfolio.TradeOrder;
 
 public class BackTester {
@@ -24,12 +26,12 @@ public class BackTester {
         this.priceHistory = priceHistory;
     }
 
-    public InvestmentStats run(InvestmentStrategy strategy, DateRange dateRange) {
+    public PortfolioStats run(InvestmentStrategy strategy, DateRange dateRange) {
         
         int startingMoney = 1_000_000;
         Portfolio portfolio = new Portfolio(startingMoney);
         
-        logger.info("Starting back test on {} with {} USD", dateRange.from, startingMoney);
+        //logger.info("Starting back test on {} with {} USD", dateRange.from, startingMoney);
         
         List<TradeOrder> initialTradeOrders = strategy.start(priceHistory, dateRange.from, startingMoney);
         execureTradeOrders(portfolio, initialTradeOrders);
@@ -44,11 +46,9 @@ public class BackTester {
             }
         }
         
-        LocalDate evaluationDate = dateRange.to.plusDays(1);
+        PortfolioStats portfolioStats = PortfolioStatsCreator.createPortfolioStats(portfolio, priceHistory);
         
-        int endValue = portfolio.portfolioValue(priceHistory.assetPricesAt(evaluationDate));
-        
-        return new InvestmentStats(dateRange, startingMoney, endValue);
+        return portfolioStats;
     }
 
     private static void execureTradeOrders(Portfolio portfolio, List<TradeOrder> tradeOrders) {

@@ -1,16 +1,25 @@
 package hu.kits.investments.domain.math;
 
+import java.util.Collection;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 
 public class KitsStat {
 
+    public static double average(Collection<? extends Number> values) {
+        return average(values.stream().mapToDouble(Number::doubleValue).toArray());
+    }
+    
     public static double average(double[] values) {
         if (values.length == 0)
             throw new IllegalArgumentException("Cannot compute statistics without data");
         return DoubleStream.of(values).average().getAsDouble();
     }
 
+    public static double stDev(Collection<? extends Number> values) {
+        return stDev(values.stream().mapToDouble(Number::doubleValue).toArray());
+    }
+    
     public static double stDev(double[] values) {
         double average = average(values);
         return KitsMath.sqrt(DoubleStream.of(values).map(value -> KitsMath.square(value - average)).average().getAsDouble());

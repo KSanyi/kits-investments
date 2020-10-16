@@ -27,6 +27,10 @@ public class PriceHistory {
         return priceMap.keySet().stream().sorted(comparing(Asset::ticker)).collect(toList());
     }
     
+    public List<LocalDate> dates() {
+        return priceMap.values().stream().flatMap(map -> map.keySet().stream()).distinct().sorted().collect(toList());
+    }
+    
     public Optional<Double> findPrice(Asset asset, LocalDate date) {
         
         Map<LocalDate, Double> priceMapForAsset = priceMap.getOrDefault(asset, Map.of());

@@ -1,7 +1,6 @@
 package hu.kits.investments;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -15,7 +14,6 @@ import com.mysql.cj.jdbc.MysqlDataSource;
 import hu.kits.investments.common.DateRange;
 import hu.kits.investments.domain.Asset;
 import hu.kits.investments.domain.BackTester;
-import hu.kits.investments.domain.InvestmentStats;
 import hu.kits.investments.domain.investment.Allocation;
 import hu.kits.investments.domain.investment.InvestmentStrategy;
 import hu.kits.investments.domain.investment.strategy.BuyAndHold;
@@ -25,6 +23,7 @@ import hu.kits.investments.domain.marketdata.PriceDataSource;
 import hu.kits.investments.domain.marketdata.PriceHistory;
 import hu.kits.investments.domain.math.YieldCorrelationMatrix;
 import hu.kits.investments.domain.optimization.AllocationCreator;
+import hu.kits.investments.domain.portfolio.PortfolioStats;
 import hu.kits.investments.infrastructure.database.PriceDataJdbiRepository;
 import hu.kits.investments.infrastructure.marketdata.yahoo.YahooPriceDataSource;
 
@@ -39,7 +38,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         //showCorrelationMatrix();
-        runBacktest1();
+        runBacktest2();
     }
     
     private static void fetchPriceData() throws IOException {
@@ -65,14 +64,14 @@ public class Main {
         DateRange dateRange = new DateRange(LocalDate.of(2010, 1, 4), LocalDate.of(2018,12,31));
         
         InvestmentStrategy strategy = new BuyAndHold(new Allocation(Map.of(asset1, 50, asset2, 50)));
-        InvestmentStats investmentStats = backTester.run(strategy, dateRange);
+        PortfolioStats portfolioStats = backTester.run(strategy, dateRange);
         
-        System.out.println(investmentStats);
+        System.out.println(portfolioStats);
     }
     
     private static void runBacktest2() {
         
-        PriceHistory priceHistory = priceDataService.getPriceHistory().in(new DateRange(LocalDate.of(2010, 9, 9), LocalDate.of(2018,12,31)));
+        PriceHistory priceHistory = priceDataService.getPriceHistory().in(new DateRange(LocalDate.of(2010, 1, 1), LocalDate.of(2018,12,31)));
         
         BackTester backTester = new BackTester(priceHistory);
         
@@ -81,12 +80,12 @@ public class Main {
         
         List<Allocation> allocations = AllocationCreator.createAllocations(List.of(asset1, asset2), 10);
         
-        DateRange dateRange = new DateRange(LocalDate.of(2010, 1, 1), LocalDate.of(2018,12,31));
+        DateRange dateRange = new DateRange(LocalDate.of(2010, 1, 4), LocalDate.of(2018,12,31));
         
         for(Allocation allocation : allocations) {
             InvestmentStrategy strategy = new BuyAndHold(allocation);
-            InvestmentStats investmentStats = backTester.run(strategy, dateRange);
-            System.out.println(strategy + " result: " + investmentStats);
+            PortfolioStats portfolioStats = backTester.run(strategy, dateRange);
+            System.out.println(strategy + " result: " + portfolioStats);
         }
     }
     

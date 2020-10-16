@@ -46,9 +46,9 @@ public class BackTestTest {
         
         InvestmentStrategy strategy = new BuyAndHold(new Allocation(Map.of(asset1, 100)));
         
-        int endValue = backTester.run(strategy, dateRange).endValue;
+        var entry = backTester.run(strategy, dateRange).end();
         
-        assertEquals(1_150_000, endValue);
+        assertEquals(1_150_000, entry.value());
     }
     
     @Test
@@ -60,9 +60,9 @@ public class BackTestTest {
         
         InvestmentStrategy strategy = new BuyAndHold(new Allocation(Map.of(asset1, 50, asset2, 50)));
         
-        int endValue = backTester.run(strategy, dateRange).endValue;
+        var entry = backTester.run(strategy, dateRange).end();
         
-        assertEquals(950_000, endValue);
+        assertEquals(950_000, entry.value());
     }
     
     @Test
@@ -74,9 +74,9 @@ public class BackTestTest {
         
         InvestmentStrategy strategy = new NeverInvest();
         
-        int endValue = backTester.run(strategy, dateRange).endValue;
+        var entry = backTester.run(strategy, dateRange).end();
         
-        assertEquals(1_000_000, endValue);
+        assertEquals(1_000_000, entry.value());
     }
     
 }
