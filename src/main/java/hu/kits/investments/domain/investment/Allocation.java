@@ -1,5 +1,6 @@
 package hu.kits.investments.domain.investment;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -15,6 +16,9 @@ public class Allocation {
     private final Map<Asset, Integer> assetWeights;
 
     public Allocation(Map<Asset, Integer> assetWeights) {
+        Collection<Integer> weights = assetWeights.values();
+        if(weights.stream().anyMatch(weight -> weight < 0)) throw new IllegalArgumentException("Can't have negative weights");
+        if(weights.stream().mapToInt(Integer::intValue).sum() > 100) throw new IllegalArgumentException("Sum of asset weight must be <= 100");
         this.assetWeights = Map.copyOf(assetWeights);
     }
     
@@ -24,6 +28,10 @@ public class Allocation {
     
     public Set<Asset> assets() {
         return assetWeights.keySet();
+    }
+    
+    public int cashWeight() {
+        return assetWeights.values().stream().mapToInt(Integer::intValue).sum();
     }
     
     @Override

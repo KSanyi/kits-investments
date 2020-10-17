@@ -31,11 +31,11 @@ public class Formatters {
         return  DATE_TIME_FORMAT.format(date);
     }
     
-    public static String formatPercent(double value) {
+    public static String formatPercent(Number value) {
         return PERCENT_FORMAT.format(value);
     }
     
-    public static String formatDecimal(int value) {
+    public static String formatDecimal(Number value) {
         return DECIMAL_FORMAT.format(value);
     }
     

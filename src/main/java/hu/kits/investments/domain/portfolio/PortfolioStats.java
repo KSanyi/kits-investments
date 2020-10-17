@@ -3,7 +3,7 @@ package hu.kits.investments.domain.portfolio;
 import java.util.List;
 
 import hu.kits.investments.common.Formatters;
-import hu.kits.investments.domain.portfolio.TimeSeries.TimeSeriesEntry;
+import hu.kits.investments.domain.TimeSeries.TimeSeriesEntry;
 
 public record PortfolioStats(
         TimeSeriesEntry<Integer> start, 

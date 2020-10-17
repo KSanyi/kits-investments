@@ -4,7 +4,6 @@ import static java.util.Collections.emptyMap;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -14,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import hu.kits.investments.common.CollectionsUtil;
 import hu.kits.investments.domain.Asset;

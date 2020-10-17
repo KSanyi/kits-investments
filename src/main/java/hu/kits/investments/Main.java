@@ -1,6 +1,7 @@
 package hu.kits.investments;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -8,6 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
 
@@ -17,6 +21,7 @@ import hu.kits.investments.domain.BackTester;
 import hu.kits.investments.domain.investment.Allocation;
 import hu.kits.investments.domain.investment.InvestmentStrategy;
 import hu.kits.investments.domain.investment.strategy.BuyAndHold;
+import hu.kits.investments.domain.investment.strategy.ConstantAllocation;
 import hu.kits.investments.domain.marketdata.PriceDataRepository;
 import hu.kits.investments.domain.marketdata.PriceDataService;
 import hu.kits.investments.domain.marketdata.PriceDataSource;
@@ -29,6 +34,8 @@ import hu.kits.investments.infrastructure.marketdata.yahoo.YahooPriceDataSource;
 
 public class Main {
 
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    
     private static PriceDataSource priceDataSource = new YahooPriceDataSource();
     private static DataSource dataSource = createDataSource();
     private static PriceDataRepository priceDataRepository = new PriceDataJdbiRepository(dataSource);
@@ -38,7 +45,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         //showCorrelationMatrix();
-        runBacktest2();
+        runBacktest1();
     }
     
     private static void fetchPriceData() throws IOException {
@@ -63,10 +70,17 @@ public class Main {
         
         DateRange dateRange = new DateRange(LocalDate.of(2010, 1, 4), LocalDate.of(2018,12,31));
         
-        InvestmentStrategy strategy = new BuyAndHold(new Allocation(Map.of(asset1, 50, asset2, 50)));
-        PortfolioStats portfolioStats = backTester.run(strategy, dateRange);
+        InvestmentStrategy buyAndHoldStrategy = new BuyAndHold(new Allocation(Map.of(asset1, 50, asset2, 50)));
+        PortfolioStats buyAndHoldPortfolioStats = backTester.run(buyAndHoldStrategy, dateRange);
+        System.out.println("Buy and hold");
+        System.out.println(buyAndHoldPortfolioStats);
         
-        System.out.println(portfolioStats);
+        System.out.println("");
+        
+        ConstantAllocation constantAllocationStrategy = new ConstantAllocation(new Allocation(Map.of(asset1, 50, asset2, 50)), 6);
+        PortfolioStats constantAllocationPortfolioStats = backTester.run(constantAllocationStrategy, dateRange);
+        System.out.println("Constant allocation");
+        System.out.println(constantAllocationPortfolioStats);
     }
     
     private static void runBacktest2() {

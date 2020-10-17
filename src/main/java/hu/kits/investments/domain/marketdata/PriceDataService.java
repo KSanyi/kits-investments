@@ -23,7 +23,10 @@ public class PriceDataService {
     }
     
     public PriceHistory getPriceHistory() {
-        return priceDataRepository.getPriceHistory();
+        logger.debug("Loading price history");
+        PriceHistory priceHistory = priceDataRepository.getPriceHistory();
+        logger.info("Price history loaded: {}", priceHistory);
+        return priceHistory;
     }
     
     public void fetchAndSavePriceData(String ticker, LocalDate from) {

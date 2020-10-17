@@ -1,4 +1,4 @@
-package hu.kits.investments.domain.portfolio;
+package hu.kits.investments.domain;
 
 import java.time.LocalDate;
 import java.util.List;

@@ -39,7 +39,7 @@ public class BuyAndHold implements InvestmentStrategy {
     
     private static TradeOrder createTradeOrder(LocalDate date, Asset asset, double weight, AssetPrices assetPrices, int cash) {
        
-        Double unitPrice = assetPrices.price(asset).orElseThrow(() -> new IllegalArgumentException("Can no find price for " + asset.ticker() + " for " + date));
+        Double unitPrice = assetPrices.price(asset).orElseThrow(() -> new IllegalArgumentException("Can not find price for " + asset.ticker() + " for " + date));
         int quantity = (int)Math.floor(cash * weight / unitPrice);
         
         return new TradeOrder(date, asset, quantity, unitPrice);

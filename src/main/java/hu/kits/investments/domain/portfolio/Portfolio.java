@@ -46,7 +46,7 @@ public class Portfolio {
     }
     
     public void buy(LocalDate date, Asset asset, int quantity, double unitPrice) {
-        if(cashAt(date) < unitPrice * quantity) throw new IllegalStateException("Do not have " + unitPrice + " USD cash in portfolio");
+        if(cashAt(date) + 100 < unitPrice * quantity) throw new IllegalStateException("Do not have " + unitPrice + " USD cash in portfolio");
         tradeOrders.add(new TradeOrder(date, asset, quantity, unitPrice));
     }
     

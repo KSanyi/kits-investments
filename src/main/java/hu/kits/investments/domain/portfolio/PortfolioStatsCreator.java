@@ -9,9 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import hu.kits.investments.domain.TimeSeries;
+import hu.kits.investments.domain.TimeSeries.TimeSeriesEntry;
 import hu.kits.investments.domain.marketdata.PriceHistory;
 import hu.kits.investments.domain.math.KitsStat;
-import hu.kits.investments.domain.portfolio.TimeSeries.TimeSeriesEntry;
 
 public class PortfolioStatsCreator {
 

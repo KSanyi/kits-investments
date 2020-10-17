@@ -100,6 +100,12 @@ public class PriceHistory {
         };
     }
     
+    @Override
+    public String toString() {
+        List<LocalDate> dates = dates(); 
+        return assets().size() + " assets for " + dates.get(0) + " - " + dates.get(dates.size()-1); 
+    }
+    
     public String printStats() {
         return priceMap.entrySet().stream()
             .collect(toMap(e -> e.getKey(), e -> e.getValue().size()))
