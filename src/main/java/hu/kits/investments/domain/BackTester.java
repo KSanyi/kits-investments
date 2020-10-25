@@ -5,15 +5,13 @@ import static java.util.stream.Collectors.toList;
 
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import hu.kits.investments.common.DateRange;
-import hu.kits.investments.domain.investment.InvestmentStrategy;
+import hu.kits.investments.domain.investment.strategy.InvestmentStrategy;
 import hu.kits.investments.domain.marketdata.PriceHistory;
 import hu.kits.investments.domain.portfolio.Portfolio;
 import hu.kits.investments.domain.portfolio.PortfolioSnapshot;

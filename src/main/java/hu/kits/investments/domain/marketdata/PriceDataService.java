@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import hu.kits.investments.common.DateRange;
+import hu.kits.investments.domain.Asset;
 
 public class PriceDataService {
 
@@ -22,9 +23,9 @@ public class PriceDataService {
         this.priceDataRepository = priceDataRepository;
     }
     
-    public PriceHistory getPriceHistory() {
+    public PriceHistory getPriceHistory(List<Asset> assets) {
         logger.debug("Loading price history");
-        PriceHistory priceHistory = priceDataRepository.getPriceHistory();
+        PriceHistory priceHistory = priceDataRepository.getPriceHistory(assets);
         logger.info("Price history loaded: {}", priceHistory);
         return priceHistory;
     }

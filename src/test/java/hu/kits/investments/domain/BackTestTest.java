@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 
 import hu.kits.investments.common.DateRange;
 import hu.kits.investments.domain.investment.Allocation;
-import hu.kits.investments.domain.investment.InvestmentStrategy;
 import hu.kits.investments.domain.investment.strategy.BuyAndHold;
+import hu.kits.investments.domain.investment.strategy.InvestmentStrategy;
 import hu.kits.investments.domain.investment.strategy.NeverInvest;
 import hu.kits.investments.domain.marketdata.PriceHistory;
 

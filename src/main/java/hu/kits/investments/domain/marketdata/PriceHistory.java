@@ -6,10 +6,12 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import hu.kits.investments.common.DateRange;
@@ -20,9 +22,20 @@ public class PriceHistory {
     private final Map<Asset, Map<LocalDate, Double>> priceMap;
 
     public PriceHistory(Map<Asset, Map<LocalDate, Double>> priceMap) {
+        validate(priceMap);
         this.priceMap = Map.copyOf(priceMap);
     }
     
+    private static void validate(Map<Asset, Map<LocalDate, Double>> priceMap) {
+        Set<LocalDate> dates = priceMap.values().stream().map(Map::keySet).max(Comparator.comparing(Set::size)).get();
+        
+        for(Asset asset : priceMap.keySet()) {
+            if(!priceMap.get(asset).keySet().equals(dates)) {
+                throw new IllegalArgumentException("There is not enough price data for " + asset.ticker());
+            }
+        }
+    }
+
     public List<Asset> assets() {
         return priceMap.keySet().stream().sorted(comparing(Asset::ticker)).collect(toList());
     }

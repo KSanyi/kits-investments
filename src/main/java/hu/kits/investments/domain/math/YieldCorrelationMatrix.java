@@ -71,7 +71,6 @@ public class YieldCorrelationMatrix {
     }
 
     private static double calculateCorrelation(Asset asset1, Asset asset2, PriceHistory priceHistory) {
-        System.out.println("Correlation " + asset1.ticker() + " vs " + asset2.ticker());
         double[] prices1 = priceHistory.getPriceDatas(asset1).stream().mapToDouble(PriceData::price).toArray();
         double[] yields1 = calculateYields(prices1);
         double[] prices2 = priceHistory.getPriceDatas(asset2).stream().mapToDouble(PriceData::price).toArray();
@@ -97,7 +96,7 @@ public class YieldCorrelationMatrix {
         StringBuilder sb = new StringBuilder(assets.stream().map(Asset::ticker).collect(joining("\t", " \t", "\n")));
         
         for(Asset asset1 : assets) {
-            sb.append(asset1).append("\t");
+            sb.append(asset1.ticker()).append("\t");
             for(Asset asset2 : assets) {
                 double correlation = matrix.get(asset1).get(asset2);
                 sb.append(formatter.format(correlation)).append("\t");

@@ -19,9 +19,9 @@ import hu.kits.investments.common.DateRange;
 import hu.kits.investments.domain.Asset;
 import hu.kits.investments.domain.BackTester;
 import hu.kits.investments.domain.investment.Allocation;
-import hu.kits.investments.domain.investment.InvestmentStrategy;
 import hu.kits.investments.domain.investment.strategy.BuyAndHold;
 import hu.kits.investments.domain.investment.strategy.ConstantAllocation;
+import hu.kits.investments.domain.investment.strategy.InvestmentStrategy;
 import hu.kits.investments.domain.marketdata.PriceDataRepository;
 import hu.kits.investments.domain.marketdata.PriceDataService;
 import hu.kits.investments.domain.marketdata.PriceDataSource;
@@ -44,8 +44,8 @@ public class Main {
     
     public static void main(String[] args) throws Exception {
 
-        //showCorrelationMatrix();
-        runBacktest1();
+        showCorrelationMatrix();
+        //runBacktest1();
     }
     
     private static void fetchPriceData() throws IOException {
@@ -55,18 +55,20 @@ public class Main {
     }
     
     private static void showCorrelationMatrix() {
-        PriceHistory priceHistory = priceDataService.getPriceHistory().in(new DateRange(LocalDate.of(2010, 1, 1), LocalDate.of(2020,1,1)));
+        List<Asset> assets = List.of(new Asset("GOOG"), new Asset("NFLX"), new Asset("MSFT"), new Asset("AAPL"), new Asset("AAPL"), new Asset("COF"));
+        PriceHistory priceHistory = priceDataService.getPriceHistory(assets).in(new DateRange(LocalDate.of(2010, 1, 1), LocalDate.of(2020,1,1)));
         
         System.out.println(YieldCorrelationMatrix.create(priceHistory));
     }
     
     private static void runBacktest1() {
-        PriceHistory priceHistory = priceDataService.getPriceHistory().in(new DateRange(LocalDate.of(2010, 1, 1), LocalDate.of(2018,12,31)));
+        
+        Asset asset1 = new Asset("GOOG");
+        Asset asset2 = new Asset("NFLX");
+        
+        PriceHistory priceHistory = priceDataService.getPriceHistory(List.of(asset1, asset2)).in(new DateRange(LocalDate.of(2010, 1, 1), LocalDate.of(2018,12,31)));
         
         BackTester backTester = new BackTester(priceHistory);
-        
-        Asset asset1 = new Asset("CMS");
-        Asset asset2 = new Asset("WEC");
         
         DateRange dateRange = new DateRange(LocalDate.of(2010, 1, 4), LocalDate.of(2018,12,31));
         
@@ -85,12 +87,12 @@ public class Main {
     
     private static void runBacktest2() {
         
-        PriceHistory priceHistory = priceDataService.getPriceHistory().in(new DateRange(LocalDate.of(2010, 1, 1), LocalDate.of(2018,12,31)));
+        Asset asset1 = new Asset("GOOG");
+        Asset asset2 = new Asset("NFLX");
+        
+        PriceHistory priceHistory = priceDataService.getPriceHistory(List.of(asset1, asset2)).in(new DateRange(LocalDate.of(2010, 1, 1), LocalDate.of(2018,12,31)));
         
         BackTester backTester = new BackTester(priceHistory);
-        
-        Asset asset1 = new Asset("CMS");
-        Asset asset2 = new Asset("WEC");
         
         List<Allocation> allocations = AllocationCreator.createAllocations(List.of(asset1, asset2), 10);
         
