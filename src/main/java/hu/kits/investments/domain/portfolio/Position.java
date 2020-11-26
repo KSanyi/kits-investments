@@ -2,7 +2,7 @@ package hu.kits.investments.domain.portfolio;
 
 import java.util.List;
 
-import hu.kits.investments.domain.Asset;
+import hu.kits.investments.domain.asset.Asset;
 
 public record Position(Asset asset, int quantity) {
 

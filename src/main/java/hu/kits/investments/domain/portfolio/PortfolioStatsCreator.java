@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import hu.kits.investments.common.DateRange;
+import hu.kits.investments.common.Pair;
 import hu.kits.investments.domain.TimeSeries;
 import hu.kits.investments.domain.TimeSeries.TimeSeriesEntry;
 import hu.kits.investments.domain.marketdata.PriceHistory;
@@ -18,9 +20,9 @@ public class PortfolioStatsCreator {
 
     public static PortfolioStats createPortfolioStats(Portfolio portfolio, PriceHistory priceHistory) {
         
-        Map<LocalDate, Integer> porfolioValues = priceHistory.dates().stream().collect(toMap(
+        Map<LocalDate, Integer> porfolioValues = priceHistory.dateRange().stream().collect(toMap(
                 date -> date,
-                date -> portfolio.portfolioValue(priceHistory.assetPricesAt(date))));
+                date -> portfolio.portfolioValueAt(date, priceHistory.assetPricesAt(date))));
         
         TimeSeries<Integer> valueHistory = new TimeSeries<>(porfolioValues);
         
@@ -28,7 +30,10 @@ public class PortfolioStatsCreator {
         TimeSeriesEntry<Integer> end = valueHistory.lastEntry();
         
         double yield = (end.value() - start.value()) / (double)start.value();
-        double yearlyYield = calculateYearlyYield(yield, start, end);
+        double annualYield = annualize(yield, start, end);
+        
+        double twr = calculateTwr(portfolio, valueHistory);
+        double annualTwr = annualize(twr, start, end);
         
         List<Double> dailyYields = calculateDailyYields(valueHistory.values());
         double volatility = KitsStat.stDev(dailyYields) * Math.sqrt(250);
@@ -36,13 +41,38 @@ public class PortfolioStatsCreator {
         TimeSeriesEntry<Integer> high = findHigh(valueHistory);
         TimeSeriesEntry<Integer> low = findLow(valueHistory);
         
-        return new PortfolioStats(start, end, yield, yearlyYield, volatility, high, low);
+        return new PortfolioStats(start, end, yield, annualYield, twr, annualTwr, volatility, high, low);
     }
     
-    private static double calculateYearlyYield(double yield, TimeSeriesEntry<Integer> start, TimeSeriesEntry<Integer> end) {
+    private static double annualize(double yield, TimeSeriesEntry<Integer> start, TimeSeriesEntry<Integer> end) {
         
         long days = ChronoUnit.DAYS.between(start.date(), end.date());
         return Math.pow(1 + yield, 365.0 / days) - 1;
+    }
+    
+    private static double calculateTwr(Portfolio portfolio, TimeSeries<Integer> valueHistory) {
+        
+        List<Pair<DateRange, Integer>> periods = new ArrayList<>();
+        for(int i=0;i<portfolio.cashMovements.size()-1;i++) {
+            CashMovement cashMovement = portfolio.cashMovements.get(i);
+            CashMovement nextCashMovement = portfolio.cashMovements.get(i+1);
+            periods.add(new Pair<>(new DateRange(cashMovement.date(), nextCashMovement.date()), nextCashMovement.amount()));
+        }
+        CashMovement cashMovement = portfolio.cashMovements.get(portfolio.cashMovements.size()-1);
+        periods.add(new Pair<>(new DateRange(cashMovement.date(), valueHistory.lastEntry().date()), 0));
+        
+        System.out.println(periods);
+        
+        List<Double> twrs = new ArrayList<>();
+        for(var period : periods) {
+            int startValue = valueHistory.effectiveValueAt(period.value1().from);
+            int endValue = valueHistory.effectiveValueAt(period.value1().to);
+            int cashflow = period.value2();
+            double r = (endValue - startValue - cashflow) / (double)startValue;
+            twrs.add(r);
+        }
+        
+        return twrs.stream().mapToDouble(r -> 1+r).reduce((a, b) -> a*b).orElse(1) - 1;
     }
     
     private static List<Double> calculateDailyYields(List<Integer> values) {

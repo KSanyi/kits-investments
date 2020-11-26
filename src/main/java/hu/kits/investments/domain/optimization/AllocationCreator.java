@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import hu.kits.investments.domain.Asset;
+import hu.kits.investments.domain.asset.Asset;
 import hu.kits.investments.domain.investment.Allocation;
 
 public class AllocationCreator {

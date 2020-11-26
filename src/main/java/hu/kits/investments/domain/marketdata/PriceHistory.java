@@ -15,14 +15,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import hu.kits.investments.common.DateRange;
-import hu.kits.investments.domain.Asset;
+import hu.kits.investments.domain.asset.Asset;
 
 public class PriceHistory {
 
     private final Map<Asset, Map<LocalDate, Double>> priceMap;
 
     public PriceHistory(Map<Asset, Map<LocalDate, Double>> priceMap) {
-        validate(priceMap);
+        //validate(priceMap);
         this.priceMap = Map.copyOf(priceMap);
     }
     
@@ -63,7 +63,7 @@ public class PriceHistory {
     
     public List<PriceData> getPriceDatas(Asset asset) {
         return priceMap.getOrDefault(asset, emptyMap()).entrySet().stream()
-            .map(e -> new PriceData(asset, e.getKey(), e.getValue()))
+            .map(e -> new PriceData(asset.ticker(), e.getKey(), e.getValue()))
             .collect(toList());
     }
     
@@ -125,6 +125,11 @@ public class PriceHistory {
             .entrySet().stream()
             .map(e -> e.getKey() + ": " + e.getValue() + " entries")
             .collect(Collectors.joining("\n"));
+    }
+
+    public DateRange dateRange() {
+        var dates = dates();
+        return new DateRange(dates.get(0), dates.get(dates.size()-1));
     }
 
 }

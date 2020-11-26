@@ -1,12 +1,10 @@
 package hu.kits.investments.domain.marketdata;
 
-import java.util.List;
-
-import hu.kits.investments.domain.Asset;
+import hu.kits.investments.domain.asset.Assets;
 
 public interface PriceDataRepository {
 
-    PriceHistory getPriceHistory(List<Asset> assets);
+    PriceHistory getPriceHistory(Assets assets);
     
     boolean savePriceData(PriceData priceData);
     

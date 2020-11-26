@@ -7,14 +7,16 @@ import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import hu.kits.investments.domain.asset.Asset;
+import hu.kits.investments.domain.asset.Asset.AssetClass;
 import hu.kits.investments.domain.investment.Allocation;
 import hu.kits.investments.domain.optimization.AllocationCreator;
 
 public class AllocationCreatorTest {
 
-    private final Asset asset1 = new Asset("AAPL");
-    private final Asset asset2 = new Asset("BAX");
-    private final Asset asset3 = new Asset("GOOG");
+    private final Asset asset1 = new Asset("AAPL", "", AssetClass.EQUITY, "");
+    private final Asset asset2 = new Asset("BAX", "", AssetClass.EQUITY, "");
+    private final Asset asset3 = new Asset("GOOG", "", AssetClass.EQUITY, "");
     
     @Test
     void twoAssets() {

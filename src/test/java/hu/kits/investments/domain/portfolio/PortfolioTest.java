@@ -1,5 +1,7 @@
 package hu.kits.investments.domain.portfolio;
 
+import static hu.kits.investments.domain.TestAssets.AAPL;
+import static hu.kits.investments.domain.TestAssets.AMZN;
 import static java.time.LocalDate.parse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -8,16 +10,12 @@ import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import hu.kits.investments.domain.Asset;
-
 public class PortfolioTest {
 
-    private final Asset AAPL = new Asset("AAPL");
-    private final Asset AMZN = new Asset("AMZN");
-    
     @Test
     void buy() {
-        Portfolio portfolio = new Portfolio(3_000);
+        Portfolio portfolio = new Portfolio();
+        portfolio.deposit(parse("2020-08-30"), 3_000);
         
         Assertions.assertEquals(3_000, portfolio.cash());
         Assertions.assertEquals(0, portfolio.quantity(AAPL));
@@ -39,7 +37,8 @@ public class PortfolioTest {
     
     @Test
     void sell() {
-        Portfolio portfolio = new Portfolio(1_000);
+        Portfolio portfolio = new Portfolio();
+        portfolio.deposit(parse("2020-08-30"), 1_000);
         portfolio.buy(parse("2020-09-01"), AAPL, 2, 300);
         
         Assertions.assertEquals(400, portfolio.cash());
@@ -61,7 +60,8 @@ public class PortfolioTest {
     
     @Test
     void buy2() {
-        Portfolio portfolio = new Portfolio(1_000);
+        Portfolio portfolio = new Portfolio();
+        portfolio.deposit(parse("2020-08-30"), 1_000);
         
         Assertions.assertEquals(1000, portfolio.cash());
         Assertions.assertEquals(0, portfolio.quantity(AAPL));
@@ -76,16 +76,18 @@ public class PortfolioTest {
     
     @Test
     void buyTooMuch() {
-        Portfolio portfolio = new Portfolio(1_000);
+        Portfolio portfolio = new Portfolio();
+        portfolio.deposit(parse("2020-08-30"), 1_000);
         
         Assertions.assertThrows(IllegalStateException.class, () -> {
-            portfolio.buy(parse("2020-09-01"), AAPL, 1, 1001);
+            portfolio.buy(parse("2020-09-01"), AAPL, 1, 1101);
         });
     }
     
     @Test
     void sellTooMuch() {
-        Portfolio portfolio = new Portfolio(1_000);
+        Portfolio portfolio = new Portfolio();
+        portfolio.deposit(parse("2020-09-01"), 1_000);
         portfolio.buy(parse("2020-09-01"), AAPL, 1, 500);
         
         Assertions.assertThrows(IllegalStateException.class, () -> {
@@ -95,7 +97,8 @@ public class PortfolioTest {
     
     @Test
     void snapshot() {
-        Portfolio portfolio = new Portfolio(10_000);
+        Portfolio portfolio = new Portfolio();
+        portfolio.deposit(parse("2020-08-30"), 10_000);
         
         portfolio.buy(parse("2020-09-01"), AAPL, 10, 500);
         portfolio.buy(parse("2020-09-01"), AMZN, 20, 200);

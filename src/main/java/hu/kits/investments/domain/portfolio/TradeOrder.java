@@ -2,7 +2,7 @@ package hu.kits.investments.domain.portfolio;
 
 import java.time.LocalDate;
 
-import hu.kits.investments.domain.Asset;
+import hu.kits.investments.domain.asset.Asset;
 
 public record TradeOrder(LocalDate date, Asset asset, int quantity, double unitPrice) {
 

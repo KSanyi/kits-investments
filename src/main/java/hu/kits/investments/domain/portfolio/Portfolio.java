@@ -10,17 +10,20 @@ import java.util.Map;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import hu.kits.investments.domain.Asset;
+import hu.kits.investments.domain.asset.Asset;
 import hu.kits.investments.domain.marketdata.AssetPrices;
 
 public class Portfolio {
 
     private final List<TradeOrder> tradeOrders = new ArrayList<>();
+    public final List<CashMovement> cashMovements = new ArrayList<>();
     
-    private final int startCash;
+    public void deposit(LocalDate date, int amount) {
+        cashMovements.add(new CashMovement(date, amount));
+    }
     
-    public Portfolio(int startCash) {
-        this.startCash = startCash;
+    public void withdraw(LocalDate date, int amount) {
+        cashMovements.add(new CashMovement(date, -amount));
     }
     
     public int cash() {
@@ -28,10 +31,18 @@ public class Portfolio {
     }
     
     public int cashAt(LocalDate date) {
-        return startCash - tradeOrders.stream()
-                .filter(tradeOrder -> !tradeOrder.date().isAfter(date))
-                .mapToInt(TradeOrder::value)
+        
+        int netTradeCashMovements = tradeOrders.stream()
+            .filter(tradeOrder -> !tradeOrder.date().isAfter(date))
+            .mapToInt(TradeOrder::value)
+            .sum();
+        
+        int netCashMovements = cashMovements.stream()
+                .filter(cashMovement -> !cashMovement.date().isAfter(date))
+                .mapToInt(CashMovement::amount)
                 .sum();
+        
+        return netCashMovements - netTradeCashMovements; 
     }
     
     public int quantity(Asset asset) {
@@ -46,12 +57,12 @@ public class Portfolio {
     }
     
     public void buy(LocalDate date, Asset asset, int quantity, double unitPrice) {
-        if(cashAt(date) + 100 < unitPrice * quantity) throw new IllegalStateException("Do not have " + unitPrice + " USD cash in portfolio");
+        if(cashAt(date) + 100 < unitPrice * quantity) throw new IllegalStateException("No " + unitPrice * quantity + " USD cash in portfolio");
         tradeOrders.add(new TradeOrder(date, asset, quantity, unitPrice));
     }
     
     public void sell(LocalDate date, Asset asset, int quantity, double unitPrice) {
-        if(quantityAt(asset, date) < quantity) throw new IllegalStateException("Do not have " + quantity + " " + asset + " in portfolio");
+        if(quantityAt(asset, date) < quantity) throw new IllegalStateException("No " + quantity + " " + asset + " in portfolio");
         tradeOrders.add(new TradeOrder(date, asset, -quantity, unitPrice));
     }
     

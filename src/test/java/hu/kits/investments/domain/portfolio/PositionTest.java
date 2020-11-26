@@ -1,5 +1,6 @@
 package hu.kits.investments.domain.portfolio;
 
+import static hu.kits.investments.domain.TestAssets.AAPL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.LocalDate;
@@ -7,12 +8,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import hu.kits.investments.domain.Asset;
-
 public class PositionTest {
 
-    private final Asset AAPL = new Asset("AAPL");
-    
     @Test
     void updateTest() {
         Position position = new Position(AAPL, 1);

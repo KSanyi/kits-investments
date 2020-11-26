@@ -16,8 +16,10 @@ import org.slf4j.LoggerFactory;
 import com.mysql.cj.jdbc.MysqlDataSource;
 
 import hu.kits.investments.common.DateRange;
-import hu.kits.investments.domain.Asset;
 import hu.kits.investments.domain.BackTester;
+import hu.kits.investments.domain.asset.Asset;
+import hu.kits.investments.domain.asset.AssetRepository;
+import hu.kits.investments.domain.asset.Assets;
 import hu.kits.investments.domain.investment.Allocation;
 import hu.kits.investments.domain.investment.strategy.BuyAndHold;
 import hu.kits.investments.domain.investment.strategy.ConstantAllocation;
@@ -29,6 +31,7 @@ import hu.kits.investments.domain.marketdata.PriceHistory;
 import hu.kits.investments.domain.math.YieldCorrelationMatrix;
 import hu.kits.investments.domain.optimization.AllocationCreator;
 import hu.kits.investments.domain.portfolio.PortfolioStats;
+import hu.kits.investments.infrastructure.database.AssetJdbiRepository;
 import hu.kits.investments.infrastructure.database.PriceDataJdbiRepository;
 import hu.kits.investments.infrastructure.marketdata.yahoo.YahooPriceDataSource;
 
@@ -36,26 +39,38 @@ public class Main {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
-    private static PriceDataSource priceDataSource = new YahooPriceDataSource();
-    private static DataSource dataSource = createDataSource();
-    private static PriceDataRepository priceDataRepository = new PriceDataJdbiRepository(dataSource);
+    private static final PriceDataSource priceDataSource = new YahooPriceDataSource();
+    private static final DataSource dataSource = createDataSource();
+    private static final PriceDataRepository priceDataRepository = new PriceDataJdbiRepository(dataSource);
+    private static final AssetRepository assetRepository = new AssetJdbiRepository(dataSource);
+    private static final Assets assets = assetRepository.loadAssets();
     
     private static PriceDataService priceDataService = new PriceDataService(priceDataSource, priceDataRepository);
     
     public static void main(String[] args) throws Exception {
 
-        showCorrelationMatrix();
+        //showCorrelationMatrix();
         //runBacktest1();
+        Asset voo = assets.findByTicker("GOOG");
+        priceDataService.fetchAndSavePriceData(voo, LocalDate.of(2019, 7, 27));
     }
     
     private static void fetchPriceData() throws IOException {
         for(String ticker : Files.readAllLines(Paths.get("./data/SP_500_tickers.txt"))) {
-            priceDataService.fetchAndSavePriceData(ticker, LocalDate.of(2019, 7, 10));
+            Asset asset = assets.findByTicker(ticker);
+            priceDataService.fetchAndSavePriceData(asset, LocalDate.of(2019, 7, 10));
         }
     }
     
     private static void showCorrelationMatrix() {
-        List<Asset> assets = List.of(new Asset("GOOG"), new Asset("NFLX"), new Asset("MSFT"), new Asset("AAPL"), new Asset("AAPL"), new Asset("COF"));
+        
+        Asset goog = assets.findByTicker("GOOG");
+        Asset nflx = assets.findByTicker("NFLX");
+        Asset msft = assets.findByTicker("MSFT");
+        Asset aapl = assets.findByTicker("NFLX");
+        Asset cof = assets.findByTicker("NFLX");
+        
+        Assets assets = Assets.of(goog, nflx, msft, aapl, cof);
         PriceHistory priceHistory = priceDataService.getPriceHistory(assets).in(new DateRange(LocalDate.of(2010, 1, 1), LocalDate.of(2020,1,1)));
         
         System.out.println(YieldCorrelationMatrix.create(priceHistory));
@@ -63,10 +78,11 @@ public class Main {
     
     private static void runBacktest1() {
         
-        Asset asset1 = new Asset("GOOG");
-        Asset asset2 = new Asset("NFLX");
+        Asset asset1 = assets.findByTicker("GOOG");
+        Asset asset2 = assets.findByTicker("NFLX");
         
-        PriceHistory priceHistory = priceDataService.getPriceHistory(List.of(asset1, asset2)).in(new DateRange(LocalDate.of(2010, 1, 1), LocalDate.of(2018,12,31)));
+        PriceHistory priceHistory = priceDataService.getPriceHistory(Assets.of(asset1, asset2))
+                .in(new DateRange(LocalDate.of(2010, 1, 1), LocalDate.of(2018,12,31)));
         
         BackTester backTester = new BackTester(priceHistory);
         
@@ -87,10 +103,10 @@ public class Main {
     
     private static void runBacktest2() {
         
-        Asset asset1 = new Asset("GOOG");
-        Asset asset2 = new Asset("NFLX");
+        Asset asset1 = assets.findByTicker("GOOG");
+        Asset asset2 = assets.findByTicker("NFLX");
         
-        PriceHistory priceHistory = priceDataService.getPriceHistory(List.of(asset1, asset2)).in(new DateRange(LocalDate.of(2010, 1, 1), LocalDate.of(2018,12,31)));
+        PriceHistory priceHistory = priceDataService.getPriceHistory(Assets.of(asset1, asset2)).in(new DateRange(LocalDate.of(2010, 1, 1), LocalDate.of(2018,12,31)));
         
         BackTester backTester = new BackTester(priceHistory);
         

@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 import hu.kits.investments.common.CollectionsUtil;
-import hu.kits.investments.domain.Asset;
+import hu.kits.investments.domain.asset.Asset;
 import hu.kits.investments.domain.marketdata.PriceData;
 import hu.kits.investments.domain.marketdata.PriceHistory;
 

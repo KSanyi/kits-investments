@@ -32,7 +32,8 @@ public class BackTester {
     public PortfolioStats run(InvestmentStrategy strategy, DateRange dateRange) {
         
         int startingMoney = 1_000_000;
-        Portfolio portfolio = new Portfolio(startingMoney);
+        Portfolio portfolio = new Portfolio();
+        portfolio.deposit(dateRange.from, 1_000_000);
         
         logger.info("Starting back test on {} with {} USD", dateRange.from, startingMoney);
         

@@ -8,7 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import hu.kits.investments.common.DateRange;
-import hu.kits.investments.domain.Asset;
+import hu.kits.investments.domain.asset.Asset;
+import hu.kits.investments.domain.asset.Assets;
 
 public class PriceDataService {
 
@@ -23,18 +24,18 @@ public class PriceDataService {
         this.priceDataRepository = priceDataRepository;
     }
     
-    public PriceHistory getPriceHistory(List<Asset> assets) {
+    public PriceHistory getPriceHistory(Assets assets) {
         logger.debug("Loading price history");
         PriceHistory priceHistory = priceDataRepository.getPriceHistory(assets);
         logger.info("Price history loaded: {}", priceHistory);
         return priceHistory;
     }
     
-    public void fetchAndSavePriceData(String ticker, LocalDate from) {
+    public void fetchAndSavePriceData(Asset asset, LocalDate from) {
         
-        List<PriceData> priceDatas = priceDataSource.getPriceData(ticker, new DateRange(from, LocalDate.now()));
+        List<PriceData> priceDatas = priceDataSource.getPriceData(asset, new DateRange(from, LocalDate.now()));
         
-        logger.info("Received {} {} price datas from source", priceDatas.size(), ticker);
+        logger.info("Received {} {} price datas from source", priceDatas.size(), asset);
         
         int savedPriceDataCount = 0;
         for(PriceData priceData : priceDatas) {
@@ -50,7 +51,7 @@ public class PriceDataService {
             }
         }
         
-        logger.info("{} {} price data saved into the repository", savedPriceDataCount, ticker);
+        logger.info("{} {} price data saved into the repository", savedPriceDataCount, asset);
     }
     
 }

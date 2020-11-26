@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 public class DateRange implements Comparable<DateRange>, Iterable<LocalDate> {
 
@@ -26,6 +27,10 @@ public class DateRange implements Comparable<DateRange>, Iterable<LocalDate> {
 	
 	public static DateRange openUntilToday() {
         return new DateRange(LocalDate.MIN, Clock.today());
+    }
+	
+	public static DateRange from(LocalDate dateFrom) {
+	    return new DateRange(dateFrom, Clock.today());
     }
 	
 	public LocalDate from;
@@ -59,6 +64,10 @@ public class DateRange implements Comparable<DateRange>, Iterable<LocalDate> {
 	    }
 	    return Collections.unmodifiableList(days);
 	}
+	
+	 public Stream<LocalDate> stream() {
+	        return days().stream();
+	    }
 	
 	public int numberOfDays() {
 	    return (int)Duration.between(from.atStartOfDay(), to.atStartOfDay()).toDays();
@@ -107,6 +116,6 @@ public class DateRange implements Comparable<DateRange>, Iterable<LocalDate> {
             }
         };
     }
-	
+
 }
 	

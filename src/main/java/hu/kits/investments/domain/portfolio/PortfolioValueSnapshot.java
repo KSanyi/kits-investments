@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import hu.kits.investments.common.Formatters;
-import hu.kits.investments.domain.Asset;
+import hu.kits.investments.domain.asset.Asset;
 
 public record PortfolioValueSnapshot(Map<Asset, Integer> assetsMap, int cash) {
 

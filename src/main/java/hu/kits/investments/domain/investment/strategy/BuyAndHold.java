@@ -6,7 +6,7 @@ import static java.util.stream.Collectors.toList;
 import java.time.LocalDate;
 import java.util.List;
 
-import hu.kits.investments.domain.Asset;
+import hu.kits.investments.domain.asset.Asset;
 import hu.kits.investments.domain.investment.Allocation;
 import hu.kits.investments.domain.marketdata.AssetPrices;
 import hu.kits.investments.domain.marketdata.PriceHistory;

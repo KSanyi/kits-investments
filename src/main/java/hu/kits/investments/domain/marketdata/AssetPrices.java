@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import hu.kits.investments.domain.Asset;
+import hu.kits.investments.domain.asset.Asset;
 
 public class AssetPrices {
 
