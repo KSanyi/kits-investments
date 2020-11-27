@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 import java.lang.invoke.MethodHandles;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
@@ -50,7 +51,7 @@ public class PriceDataJdbiRepository implements PriceDataRepository {
                 .bindList("tickers", tickers)
                 .map((rs, ctx) -> mapToPriceData(rs)).list());
         
-        Map<Asset, Map<LocalDate, Double>> priceMap = priceDataList.stream()
+        Map<Asset, Map<LocalDate, BigDecimal>> priceMap = priceDataList.stream()
                 .collect(groupingBy(priceData -> assets.findByTicker(priceData.ticker()), 
                         toMap(PriceData::date, PriceData::price)));
         
@@ -61,7 +62,7 @@ public class PriceDataJdbiRepository implements PriceDataRepository {
         return new PriceData(
                 rs.getString(COLUMN_TICKER),
                 rs.getDate(COLUMN_DATE).toLocalDate(),
-                rs.getDouble(COLUMN_CLOSE_PRICE));
+                rs.getBigDecimal(COLUMN_CLOSE_PRICE));
     }
 
     @Override

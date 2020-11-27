@@ -2,6 +2,7 @@ package hu.kits.investments;
 
 import static java.time.LocalDate.parse;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import javax.sql.DataSource;
@@ -16,6 +17,7 @@ import hu.kits.investments.domain.marketdata.PriceDataRepository;
 import hu.kits.investments.domain.marketdata.PriceHistory;
 import hu.kits.investments.domain.marketdata.fx.FXRates;
 import hu.kits.investments.domain.marketdata.fx.FXService;
+import hu.kits.investments.domain.math.MathUtil;
 import hu.kits.investments.domain.portfolio.Portfolio;
 import hu.kits.investments.domain.portfolio.PortfolioSnapshot;
 import hu.kits.investments.domain.portfolio.PortfolioStats;
@@ -47,9 +49,9 @@ public class OrsiAlapok {
         //run("BUD_KONTR", parse("2020-07-08"), 6_965_174);
         //run("BUD_ALLAM", parse("2020-01-13"), 4_990_013);
         
-        //run();
-        //System.out.println();
-        //runVOO();
+        run();
+        System.out.println();
+        runVOO();
     }
     
     private static void run() {
@@ -130,24 +132,24 @@ public class OrsiAlapok {
     }
     
     private static void buy(Portfolio portfolio, Asset asset, LocalDate date, int quantity, int amount) {
-        double price = amount / (double)quantity;
+        BigDecimal price = new BigDecimal(amount / (double)quantity);
         portfolio.buy(date, asset, quantity, price);
     }
     
     private static void buyForAmount(Portfolio portfolio, Asset asset, LocalDate date, int amount, PriceHistory priceHistory) {
-        double price = priceHistory.getPrice(asset, date);
-        int quantity = (int)(amount / price);
+        BigDecimal price = priceHistory.getPrice(asset, date);
+        int quantity = MathUtil.divideFloor(amount, price).intValue();
         portfolio.buy(date, asset, quantity, price);
     }
     
     private static void sell(Portfolio portfolio, Asset asset, LocalDate date, int quantity, int amount) {
-        double price = amount / (double)quantity;
+        BigDecimal price = new BigDecimal(amount / (double)quantity);
         portfolio.sell(date, asset, quantity, price);
     }
     
     private static void sellForAmount(Portfolio portfolio, Asset asset, LocalDate date, int amount, PriceHistory priceHistory) {
-        double price = priceHistory.getPrice(asset, date);
-        int quantity = (int)(amount / price);
+        BigDecimal price = priceHistory.getPrice(asset, date);
+        int quantity = MathUtil.divideCeil(amount, price).intValue();
         portfolio.sell(date, asset, quantity, price);
     }
     

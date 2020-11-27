@@ -21,7 +21,7 @@ public class FXRates {
 
     private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     
-    private final Map<Currency, Map<LocalDate, BigDecimal>> ratesMap;
+    public final Map<Currency, Map<LocalDate, BigDecimal>> ratesMap;
     
     public FXRates(List<FXRate> fxRates) {
         

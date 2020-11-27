@@ -11,6 +11,7 @@ import org.jdbi.v3.core.Jdbi;
 import hu.kits.investments.domain.asset.Asset;
 import hu.kits.investments.domain.asset.AssetRepository;
 import hu.kits.investments.domain.asset.Assets;
+import hu.kits.investments.domain.asset.Currency;
 
 public class AssetJdbiRepository implements AssetRepository {
     
@@ -19,6 +20,7 @@ public class AssetJdbiRepository implements AssetRepository {
     private static final String COLUMN_NAME = "NAME";
     private static final String COLUMN_ASSET_CLASS = "ASSET_CLASS";
     private static final String COLUMN_ISIN = "ISIN";
+    private static final String COLUMN_CURRENCY = "CURRENCY";
     
     private final Jdbi jdbi;
     
@@ -41,7 +43,8 @@ public class AssetJdbiRepository implements AssetRepository {
                 rs.getString(COLUMN_TICKER),
                 rs.getString(COLUMN_NAME),
                 Asset.AssetClass.valueOf(rs.getString(COLUMN_ASSET_CLASS)),
-                rs.getString(COLUMN_ISIN));
+                rs.getString(COLUMN_ISIN),
+                Currency.valueOf(rs.getString(COLUMN_CURRENCY)));
     }
 
 }

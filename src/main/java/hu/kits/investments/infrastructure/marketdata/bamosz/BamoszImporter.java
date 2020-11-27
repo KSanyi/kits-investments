@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toMap;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.NumberFormat;
@@ -91,9 +92,9 @@ public class BamoszImporter {
         
         String[] parts = line.replaceAll("\"", "").split(";");
         LocalDate date = LocalDate.parse(parts[0], DATE_FORMAT);
-        double price;
+        BigDecimal price;
         try {
-            price = NUMBER_FORMAT.parse(parts[1]).doubleValue();
+            price = new BigDecimal(NUMBER_FORMAT.parse(parts[1]).toString());
             return Optional.of(new PriceData(asset.ticker(), date, price));
         } catch (Exception ex) {
             logger.error("Error parsing: {}", line);

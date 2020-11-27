@@ -2,7 +2,9 @@ package hu.kits.investments.domain.marketdata;
 
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import hu.kits.investments.common.DateRange;
 import hu.kits.investments.domain.asset.Asset;
 import hu.kits.investments.domain.asset.Assets;
+import hu.kits.investments.domain.marketdata.fx.FXRateRepository;
+import hu.kits.investments.domain.marketdata.fx.FXRates;
 
 public class PriceDataService {
 
@@ -18,15 +22,25 @@ public class PriceDataService {
     private final PriceDataSource priceDataSource;
     
     private final PriceDataRepository priceDataRepository;
+    private final FXRateRepository fxRepository;
 
-    public PriceDataService(PriceDataSource priceDataSource, PriceDataRepository priceDataRepository) {
+    public PriceDataService(PriceDataSource priceDataSource, PriceDataRepository priceDataRepository, FXRateRepository fxRepository) {
         this.priceDataSource = priceDataSource;
         this.priceDataRepository = priceDataRepository;
+        this.fxRepository = fxRepository;
     }
     
     public PriceHistory getPriceHistory(Assets assets) {
         logger.debug("Loading price history");
         PriceHistory priceHistory = priceDataRepository.getPriceHistory(assets);
+        FXRates fxRates = fxRepository.loadFXRates();
+        
+        var assetsMap = new HashMap<>(priceHistory.priceMap);
+        var currencyAssetsMap = fxRates.ratesMap.entrySet().stream().collect(Collectors.toMap(e -> Asset.fromCurrency(e.getKey()), e -> e.getValue()));
+        
+        assetsMap.putAll(currencyAssetsMap);
+        
+        priceHistory = new PriceHistory(assetsMap);
         logger.info("Price history loaded: {}", priceHistory);
         return priceHistory;
     }

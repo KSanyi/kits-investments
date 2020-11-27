@@ -5,6 +5,7 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
@@ -19,14 +20,14 @@ import hu.kits.investments.domain.asset.Asset;
 
 public class PriceHistory {
 
-    private final Map<Asset, Map<LocalDate, Double>> priceMap;
+    public final Map<Asset, Map<LocalDate, BigDecimal>> priceMap;
 
-    public PriceHistory(Map<Asset, Map<LocalDate, Double>> priceMap) {
+    public PriceHistory(Map<Asset, Map<LocalDate, BigDecimal>> priceMap) {
         //validate(priceMap);
         this.priceMap = Map.copyOf(priceMap);
     }
     
-    private static void validate(Map<Asset, Map<LocalDate, Double>> priceMap) {
+    private static void validate(Map<Asset, Map<LocalDate, BigDecimal>> priceMap) {
         Set<LocalDate> dates = priceMap.values().stream().map(Map::keySet).max(Comparator.comparing(Set::size)).get();
         
         for(Asset asset : priceMap.keySet()) {
@@ -44,10 +45,10 @@ public class PriceHistory {
         return priceMap.values().stream().flatMap(map -> map.keySet().stream()).distinct().sorted().collect(toList());
     }
     
-    public Optional<Double> findPrice(Asset asset, LocalDate date) {
+    public Optional<BigDecimal> findPrice(Asset asset, LocalDate date) {
         
-        Map<LocalDate, Double> priceMapForAsset = priceMap.getOrDefault(asset, Map.of());
-        Double price = priceMapForAsset.get(date);
+        Map<LocalDate, BigDecimal> priceMapForAsset = priceMap.getOrDefault(asset, Map.of());
+        BigDecimal price = priceMapForAsset.get(date);
         int counter = 1;
         while(price == null && counter < 10) {
             price = priceMapForAsset.get(date.minusDays(counter));
@@ -56,7 +57,7 @@ public class PriceHistory {
         return Optional.ofNullable(price);
     }
     
-    public double getPrice(Asset asset, LocalDate date) {
+    public BigDecimal getPrice(Asset asset, LocalDate date) {
         
         return findPrice(asset, date).get();
     }
@@ -69,7 +70,7 @@ public class PriceHistory {
     
     public AssetPrices assetPricesAt(LocalDate date) {
         
-        Map<Asset, Double> assetPriceMap = priceMap.entrySet().stream()
+        Map<Asset, BigDecimal> assetPriceMap = priceMap.entrySet().stream()
                 .collect(toMap(Entry::getKey, e -> findPrice(e.getKey(), date))).entrySet().stream()
                 .filter(e -> e.getValue().isPresent())
                 .collect(toMap(Entry::getKey, e -> e.getValue().get()));
@@ -78,13 +79,13 @@ public class PriceHistory {
     }
     
     public PriceHistory in(DateRange dateRange) {
-        Map<Asset, Map<LocalDate, Double>> result = priceMap.entrySet().stream()
+        Map<Asset, Map<LocalDate, BigDecimal>> result = priceMap.entrySet().stream()
                 .collect(toMap(Entry::getKey, e -> in(e.getValue(), dateRange)));
         
         return new PriceHistory(result);
     }
     
-    private static Map<LocalDate, Double> in(Map<LocalDate, Double> priceMap, DateRange dateRange) {
+    private static Map<LocalDate, BigDecimal> in(Map<LocalDate, BigDecimal> priceMap, DateRange dateRange) {
         return priceMap.entrySet().stream()
                 .filter(e -> dateRange.contains(e.getKey()))
                 .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
@@ -94,7 +95,7 @@ public class PriceHistory {
         return new PriceHistory(priceMap) {
             
             @Override
-            public double getPrice(Asset asset, LocalDate date) {
+            public BigDecimal getPrice(Asset asset, LocalDate date) {
                 if(date.isAfter(lastDate)) {
                     throw new IllegalArgumentException("Illegal price query for date " + date);
                 } else {

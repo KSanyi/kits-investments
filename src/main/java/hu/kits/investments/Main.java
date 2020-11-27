@@ -28,10 +28,12 @@ import hu.kits.investments.domain.marketdata.PriceDataRepository;
 import hu.kits.investments.domain.marketdata.PriceDataService;
 import hu.kits.investments.domain.marketdata.PriceDataSource;
 import hu.kits.investments.domain.marketdata.PriceHistory;
+import hu.kits.investments.domain.marketdata.fx.FXRateRepository;
 import hu.kits.investments.domain.math.YieldCorrelationMatrix;
 import hu.kits.investments.domain.optimization.AllocationCreator;
 import hu.kits.investments.domain.portfolio.PortfolioStats;
 import hu.kits.investments.infrastructure.database.AssetJdbiRepository;
+import hu.kits.investments.infrastructure.database.FXRateJdbcRepository;
 import hu.kits.investments.infrastructure.database.PriceDataJdbiRepository;
 import hu.kits.investments.infrastructure.marketdata.yahoo.YahooPriceDataSource;
 
@@ -44,13 +46,13 @@ public class Main {
     private static final PriceDataRepository priceDataRepository = new PriceDataJdbiRepository(dataSource);
     private static final AssetRepository assetRepository = new AssetJdbiRepository(dataSource);
     private static final Assets assets = assetRepository.loadAssets();
-    
-    private static PriceDataService priceDataService = new PriceDataService(priceDataSource, priceDataRepository);
+    private static final FXRateRepository fxRateRepository = new FXRateJdbcRepository(dataSource);
+    private static final PriceDataService priceDataService = new PriceDataService(priceDataSource, priceDataRepository, fxRateRepository);
     
     public static void main(String[] args) throws Exception {
 
-        //showCorrelationMatrix();
-        //runBacktest1();
+        showCorrelationMatrix();
+        runBacktest1();
         Asset voo = assets.findByTicker("GOOG");
         priceDataService.fetchAndSavePriceData(voo, LocalDate.of(2019, 7, 27));
     }

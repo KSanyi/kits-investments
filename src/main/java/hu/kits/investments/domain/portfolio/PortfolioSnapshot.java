@@ -3,6 +3,7 @@ package hu.kits.investments.domain.portfolio;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toMap;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,20 +27,22 @@ public record PortfolioSnapshot(Map<Asset, Integer> assetsMap, int cash) {
     }
     
     public int portfolioValue(AssetPrices assetPrices) {
-        int valueOfAssets = assetsMap.entrySet().stream().mapToInt(e -> (int)(getAssetPrice(e.getKey(), assetPrices) * e.getValue())).sum();
+        int valueOfAssets = assetsMap.entrySet().stream()
+                .mapToInt(e -> getAssetPrice(e.getKey(), assetPrices).multiply(new BigDecimal(e.getValue())).intValue())
+                .sum();
         return valueOfAssets + cash;
     }
     
     public PortfolioValueSnapshot valuate(AssetPrices assetPrices) {
         Map<Asset, Integer> assetValueMap = assetsMap.entrySet().stream().collect(toMap(
                 e -> e.getKey(), 
-                e -> (int)(getAssetPrice(e.getKey(), assetPrices) * e.getValue())));
+                e -> getAssetPrice(e.getKey(), assetPrices).multiply(new BigDecimal(e.getValue())).intValue()));
         
         return new PortfolioValueSnapshot(assetValueMap, cash);
         
     }
     
-    private static double getAssetPrice(Asset asset, AssetPrices assetPrices) {
+    private static BigDecimal getAssetPrice(Asset asset, AssetPrices assetPrices) {
         return assetPrices.price(asset).orElseThrow(() -> new IllegalArgumentException("Can no find price for " + asset.ticker()));
     }
     

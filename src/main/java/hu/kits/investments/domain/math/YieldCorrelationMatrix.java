@@ -71,9 +71,9 @@ public class YieldCorrelationMatrix {
     }
 
     private static double calculateCorrelation(Asset asset1, Asset asset2, PriceHistory priceHistory) {
-        double[] prices1 = priceHistory.getPriceDatas(asset1).stream().mapToDouble(PriceData::price).toArray();
+        double[] prices1 = priceHistory.getPriceDatas(asset1).stream().mapToDouble(p -> p.price().doubleValue()).toArray();
         double[] yields1 = calculateYields(prices1);
-        double[] prices2 = priceHistory.getPriceDatas(asset2).stream().mapToDouble(PriceData::price).toArray();
+        double[] prices2 = priceHistory.getPriceDatas(asset2).stream().mapToDouble(p -> p.price().doubleValue()).toArray();
         double[] yields2 = calculateYields(prices2);
         return KitsStat.correlation(yields1, yields2);
     }

@@ -2,6 +2,7 @@ package hu.kits.investments.domain.portfolio;
 
 import static java.util.stream.Collectors.toMap;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,9 +39,9 @@ public class Portfolio {
             .sum();
         
         int netCashMovements = cashMovements.stream()
-                .filter(cashMovement -> !cashMovement.date().isAfter(date))
-                .mapToInt(CashMovement::amount)
-                .sum();
+            .filter(cashMovement -> !cashMovement.date().isAfter(date))
+            .mapToInt(CashMovement::amount)
+            .sum();
         
         return netCashMovements - netTradeCashMovements; 
     }
@@ -56,12 +57,15 @@ public class Portfolio {
                 .reduce(Position.createEmpty(asset), Position::update, Position::combine).quantity();
     }
     
-    public void buy(LocalDate date, Asset asset, int quantity, double unitPrice) {
-        if(cashAt(date) + 100 < unitPrice * quantity) throw new IllegalStateException("No " + unitPrice * quantity + " USD cash in portfolio");
+    public void buy(LocalDate date, Asset asset, int quantity, BigDecimal unitPrice) {
+        
+        BigDecimal value = unitPrice.multiply(new BigDecimal(quantity));
+        
+        if(cashAt(date) + 100 < value.intValue()) throw new IllegalStateException("No " + value + " USD cash in portfolio");
         tradeOrders.add(new TradeOrder(date, asset, quantity, unitPrice));
     }
     
-    public void sell(LocalDate date, Asset asset, int quantity, double unitPrice) {
+    public void sell(LocalDate date, Asset asset, int quantity, BigDecimal unitPrice) {
         if(quantityAt(asset, date) < quantity) throw new IllegalStateException("No " + quantity + " " + asset + " in portfolio");
         tradeOrders.add(new TradeOrder(date, asset, -quantity, unitPrice));
     }

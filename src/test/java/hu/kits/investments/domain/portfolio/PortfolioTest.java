@@ -5,6 +5,7 @@ import static hu.kits.investments.domain.TestAssets.AMZN;
 import static java.time.LocalDate.parse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 import org.junit.jupiter.api.Assertions;
@@ -20,8 +21,8 @@ public class PortfolioTest {
         Assertions.assertEquals(3_000, portfolio.cash());
         Assertions.assertEquals(0, portfolio.quantity(AAPL));
         
-        portfolio.buy(parse("2020-09-01"), AAPL, 1, 500);
-        portfolio.buy(parse("2020-09-02"), AAPL, 2, 550);
+        portfolio.buy(parse("2020-09-01"), AAPL, 1, new BigDecimal(500));
+        portfolio.buy(parse("2020-09-02"), AAPL, 2, new BigDecimal(550));
         
         Assertions.assertEquals(1_400, portfolio.cash());
         Assertions.assertEquals(3, portfolio.quantity(AAPL));
@@ -39,12 +40,12 @@ public class PortfolioTest {
     void sell() {
         Portfolio portfolio = new Portfolio();
         portfolio.deposit(parse("2020-08-30"), 1_000);
-        portfolio.buy(parse("2020-09-01"), AAPL, 2, 300);
+        portfolio.buy(parse("2020-09-01"), AAPL, 2, new BigDecimal(300));
         
         Assertions.assertEquals(400, portfolio.cash());
         Assertions.assertEquals(2, portfolio.quantity(AAPL));
         
-        portfolio.sell(parse("2020-09-02"), AAPL, 1, 350);
+        portfolio.sell(parse("2020-09-02"), AAPL, 1, new BigDecimal(350));
         
         Assertions.assertEquals(750, portfolio.cash());
         Assertions.assertEquals(1, portfolio.quantity(AAPL));
@@ -66,8 +67,8 @@ public class PortfolioTest {
         Assertions.assertEquals(1000, portfolio.cash());
         Assertions.assertEquals(0, portfolio.quantity(AAPL));
         
-        portfolio.buy(parse("2020-09-01"), AAPL, 1, 500);
-        portfolio.buy(parse("2020-09-01"), AMZN, 2, 200);
+        portfolio.buy(parse("2020-09-01"), AAPL, 1, new BigDecimal(500));
+        portfolio.buy(parse("2020-09-01"), AMZN, 2, new BigDecimal(200));
         
         Assertions.assertEquals(100, portfolio.cash());
         Assertions.assertEquals(1, portfolio.quantity(AAPL));
@@ -80,7 +81,7 @@ public class PortfolioTest {
         portfolio.deposit(parse("2020-08-30"), 1_000);
         
         Assertions.assertThrows(IllegalStateException.class, () -> {
-            portfolio.buy(parse("2020-09-01"), AAPL, 1, 1101);
+            portfolio.buy(parse("2020-09-01"), AAPL, 1, new BigDecimal(1101));
         });
     }
     
@@ -88,10 +89,10 @@ public class PortfolioTest {
     void sellTooMuch() {
         Portfolio portfolio = new Portfolio();
         portfolio.deposit(parse("2020-09-01"), 1_000);
-        portfolio.buy(parse("2020-09-01"), AAPL, 1, 500);
+        portfolio.buy(parse("2020-09-01"), AAPL, 1, new BigDecimal(500));
         
         Assertions.assertThrows(IllegalStateException.class, () -> {
-            portfolio.sell(parse("2020-09-01"), AAPL, 2, 1000);
+            portfolio.sell(parse("2020-09-01"), AAPL, 2, new BigDecimal(1000));
         });
     }
     
@@ -100,11 +101,11 @@ public class PortfolioTest {
         Portfolio portfolio = new Portfolio();
         portfolio.deposit(parse("2020-08-30"), 10_000);
         
-        portfolio.buy(parse("2020-09-01"), AAPL, 10, 500);
-        portfolio.buy(parse("2020-09-01"), AMZN, 20, 200);
+        portfolio.buy(parse("2020-09-01"), AAPL, 10, new BigDecimal(500));
+        portfolio.buy(parse("2020-09-01"), AMZN, 20, new BigDecimal(200));
 
-        portfolio.buy(parse("2020-09-02"), AMZN, -10, 300);
-        portfolio.buy(parse("2020-09-02"), AAPL,   5, 400);
+        portfolio.buy(parse("2020-09-02"), AMZN, -10, new BigDecimal(300));
+        portfolio.buy(parse("2020-09-02"), AAPL,   5, new BigDecimal(400));
         
         assertEquals(new PortfolioSnapshot(Map.of(AAPL, 10, AMZN, 20), 1_000), portfolio.createSnapshotAt(parse("2020-09-01")));
         assertEquals(new PortfolioSnapshot(Map.of(AAPL, 15, AMZN, 10), 2_000), portfolio.createSnapshotAt(parse("2020-09-02")));

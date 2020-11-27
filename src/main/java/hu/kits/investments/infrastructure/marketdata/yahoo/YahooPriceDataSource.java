@@ -52,7 +52,7 @@ public class YahooPriceDataSource implements PriceDataSource {
             return Optional.of(new PriceData(
                     historicalQuote.getSymbol(), 
                     toLocalDate(historicalQuote.getDate()),
-                    historicalQuote.getClose().doubleValue()));
+                    historicalQuote.getClose()));
         } else {
             return Optional.empty();
         }

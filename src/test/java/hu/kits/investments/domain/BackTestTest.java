@@ -5,6 +5,7 @@ import static hu.kits.investments.domain.TestAssets.BAX;
 import static java.time.LocalDate.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
@@ -19,22 +20,22 @@ import hu.kits.investments.domain.marketdata.PriceHistory;
 public class BackTestTest {
 
     private final PriceHistory priceHistory = new PriceHistory(Map.of(
-            AAPL, Map.of(of(2000, 1, 1), 100.0,
-                           of(2000, 1, 2), 110.0,
-                           of(2000, 1, 3), 115.0,
-                           of(2000, 1, 4), 120.0,
-                           of(2000, 1, 5), 115.0,
-                           of(2000, 1, 6), 110.0,
-                           of(2000, 1, 7), 120.0,
-                           of(2000, 1, 8), 115.0),
-            BAX, Map.of(of(2000, 1, 1), 40.0,
-                           of(2000, 1, 2), 35.0,
-                           of(2000, 1, 3), 36.0,
-                           of(2000, 1, 4), 32.0,
-                           of(2000, 1, 5), 35.0,
-                           of(2000, 1, 6), 36.0,
-                           of(2000, 1, 7), 33.0,
-                           of(2000, 1, 8), 30.0)));
+            AAPL, Map.of(of(2000, 1, 1), new BigDecimal(100.0),
+                           of(2000, 1, 2), new BigDecimal(110.0),
+                           of(2000, 1, 3), new BigDecimal(115.0),
+                           of(2000, 1, 4), new BigDecimal(120.0),
+                           of(2000, 1, 5), new BigDecimal(115.0),
+                           of(2000, 1, 6), new BigDecimal(110.0),
+                           of(2000, 1, 7), new BigDecimal(120.0),
+                           of(2000, 1, 8), new BigDecimal(115.0)),
+            BAX, Map.of(of(2000, 1, 1), new BigDecimal(40.0),
+                           of(2000, 1, 2), new BigDecimal(35.0),
+                           of(2000, 1, 3), new BigDecimal(36.0),
+                           of(2000, 1, 4), new BigDecimal(32.0),
+                           of(2000, 1, 5), new BigDecimal(35.0),
+                           of(2000, 1, 6), new BigDecimal(36.0),
+                           of(2000, 1, 7), new BigDecimal(33.0),
+                           of(2000, 1, 8), new BigDecimal(30.0))));
     
     @Test
     void buyAndHoldApple() {

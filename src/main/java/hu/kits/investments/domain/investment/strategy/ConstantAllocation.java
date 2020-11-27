@@ -4,6 +4,7 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ import hu.kits.investments.domain.asset.Asset;
 import hu.kits.investments.domain.investment.Allocation;
 import hu.kits.investments.domain.marketdata.AssetPrices;
 import hu.kits.investments.domain.marketdata.PriceHistory;
+import hu.kits.investments.domain.math.MathUtil;
 import hu.kits.investments.domain.portfolio.PortfolioSnapshot;
 import hu.kits.investments.domain.portfolio.PortfolioValueSnapshot;
 import hu.kits.investments.domain.portfolio.TradeOrder;
@@ -51,8 +53,8 @@ public class ConstantAllocation implements InvestmentStrategy {
             for(Asset asset : assets) {
                 int targetValue = targetPortfolioValueSnapshot.value(asset);
                 int currentValue = currentPortfolioValueSnapshot.value(asset);
-                double price = assetPrices.price(asset).get();
-                int diffQuantity = (int)Math.round((targetValue - currentValue) / price);
+                BigDecimal price = assetPrices.price(asset).get();
+                int diffQuantity = MathUtil.divideRound(targetValue - currentValue, price).intValue();
                 if(diffQuantity != 0) {
                     tradeOrders.add(new TradeOrder(date, asset, diffQuantity, price));
                 }
@@ -87,8 +89,8 @@ public class ConstantAllocation implements InvestmentStrategy {
     
     private static TradeOrder createTradeOrder(LocalDate date, Asset asset, double weight, AssetPrices assetPrices, int cash) {
        
-        Double unitPrice = assetPrices.price(asset).orElseThrow(() -> new IllegalArgumentException("Can not find price for " + asset.ticker() + " for " + date));
-        int quantity = (int)Math.floor(cash * weight / unitPrice);
+        BigDecimal unitPrice = assetPrices.price(asset).orElseThrow(() -> new IllegalArgumentException("Can not find price for " + asset.ticker() + " for " + date));
+        int quantity = MathUtil.divideRound(cash * weight, unitPrice).intValue();
         
         return new TradeOrder(date, asset, quantity, unitPrice);
     }
