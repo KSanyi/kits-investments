@@ -14,13 +14,17 @@ import hu.kits.investments.domain.asset.AssetRepository;
 import hu.kits.investments.domain.asset.Assets;
 import hu.kits.investments.domain.marketdata.PriceDataRepository;
 import hu.kits.investments.domain.marketdata.PriceHistory;
+import hu.kits.investments.domain.marketdata.fx.FXRates;
+import hu.kits.investments.domain.marketdata.fx.FXService;
 import hu.kits.investments.domain.portfolio.Portfolio;
 import hu.kits.investments.domain.portfolio.PortfolioSnapshot;
 import hu.kits.investments.domain.portfolio.PortfolioStats;
 import hu.kits.investments.domain.portfolio.PortfolioStatsCreator;
 import hu.kits.investments.domain.portfolio.PortfolioValueSnapshot;
 import hu.kits.investments.infrastructure.database.AssetJdbiRepository;
+import hu.kits.investments.infrastructure.database.FXRateJdbcRepository;
 import hu.kits.investments.infrastructure.database.PriceDataJdbiRepository;
+import hu.kits.investments.infrastructure.marketdata.fx.NapiArfolyamService;
 
 public class OrsiAlapok {
 
@@ -28,10 +32,14 @@ public class OrsiAlapok {
     private static final PriceDataRepository priceDataRepository = new PriceDataJdbiRepository(dataSource);
     private static final AssetRepository assetRepository = new AssetJdbiRepository(dataSource);
     private static final Assets assets = assetRepository.loadAssets();
+    private static final FXService fxService = new FXService(new FXRateJdbcRepository(dataSource), new NapiArfolyamService());
+    private static final FXRates fxRates = fxService.getFXRates();
     
     private static final LocalDate REF_DATE = parse("2020-11-16");
     
     public static void main(String[] args) {
+        
+        fxService.downloadDailyFxRates();
         
         //run("AEG_N_KOT", parse("2020-07-02"), 1_924_974);
         //run("BF_MON_FEJ", parse("2020-07-03"), 2_970_295);
@@ -39,9 +47,9 @@ public class OrsiAlapok {
         //run("BUD_KONTR", parse("2020-07-08"), 6_965_174);
         //run("BUD_ALLAM", parse("2020-01-13"), 4_990_013);
         
-        run();
-        System.out.println();
-        runVOO();
+        //run();
+        //System.out.println();
+        //runVOO();
     }
     
     private static void run() {
