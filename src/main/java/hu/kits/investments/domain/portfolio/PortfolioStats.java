@@ -13,6 +13,7 @@ public record PortfolioStats(
         double twr,
         double annualTwr,
         double volatility,
+        double sharpeRatio,
         TimeSeriesEntry<Integer> high,
         TimeSeriesEntry<Integer> low) {
 
@@ -27,6 +28,7 @@ public record PortfolioStats(
                "TWR: " + Formatters.formatPercent(twr),
                "annual TWR: " + Formatters.formatPercent(annualTwr),
                "volatility: " + Formatters.formatPercent(volatility),
+               "Sharp ratio: " + Formatters.formatFractionalDecimal(sharpeRatio),
                "high: " + high.date() + ": " + Formatters.formatDecimal(high.value()), 
                "low: " + low.date() + ": " + Formatters.formatDecimal(low.value())));
     }

@@ -18,6 +18,8 @@ import hu.kits.investments.domain.math.KitsStat;
 
 public class PortfolioStatsCreator {
 
+    private static final double RISK_FREE_RETURN = 0.05;
+    
     public static PortfolioStats createPortfolioStats(Portfolio portfolio, PriceHistory priceHistory) {
         
         Map<LocalDate, Integer> porfolioValues = priceHistory.dateRange().stream().collect(toMap(
@@ -35,13 +37,15 @@ public class PortfolioStatsCreator {
         double twr = calculateTwr(portfolio, valueHistory);
         double annualTwr = annualize(twr, start, end);
         
-        List<Double> dailyYields = calculateDailyYields(valueHistory.values());
+        List<Double> dailyYields = calculateDailyYields(portfolio, priceHistory);
         double volatility = KitsStat.stDev(dailyYields) * Math.sqrt(250);
+        
+        double sharpRatio = (twr - RISK_FREE_RETURN) / volatility;
         
         TimeSeriesEntry<Integer> high = findHigh(valueHistory);
         TimeSeriesEntry<Integer> low = findLow(valueHistory);
         
-        return new PortfolioStats(start, end, yield, annualYield, twr, annualTwr, volatility, high, low);
+        return new PortfolioStats(start, end, yield, annualYield, twr, annualTwr, volatility, sharpRatio, high, low);
     }
     
     private static double annualize(double yield, TimeSeriesEntry<Integer> start, TimeSeriesEntry<Integer> end) {
@@ -61,8 +65,6 @@ public class PortfolioStatsCreator {
         CashMovement cashMovement = portfolio.cashMovements.get(portfolio.cashMovements.size()-1);
         periods.add(new Pair<>(new DateRange(cashMovement.date(), valueHistory.lastEntry().date()), 0));
         
-        System.out.println(periods);
-        
         List<Double> twrs = new ArrayList<>();
         for(var period : periods) {
             int startValue = valueHistory.effectiveValueAt(period.value1().from);
@@ -75,15 +77,20 @@ public class PortfolioStatsCreator {
         return twrs.stream().mapToDouble(r -> 1+r).reduce((a, b) -> a*b).orElse(1) - 1;
     }
     
-    private static List<Double> calculateDailyYields(List<Integer> values) {
+    private static List<Double> calculateDailyYields(Portfolio portfolio, PriceHistory priceHistory) {
         
         List<Double> result = new ArrayList<>();
-        for(int i=1;i<values.size();i++) {
-            double valueForDay = values.get(i);
-            double valueForPrevDay = values.get(i-1);
-            double dailyYield = (valueForDay - valueForPrevDay) / valueForPrevDay - 1;
+        List<LocalDate> dates = priceHistory.dates();
+        for(int i=1;i<dates.size();i++) {
+            LocalDate date = dates.get(i);
+            LocalDate prevDate = dates.get(i-1);
+            double valueForDay = portfolio.portfolioValueAt(date, priceHistory.assetPricesAt(date));
+            double cashMovement = portfolio.netCashMovementAt(date);
+            double valueForPrevDay = portfolio.portfolioValueAt(prevDate, priceHistory.assetPricesAt(prevDate));
+            double dailyYield = (valueForDay - valueForPrevDay - cashMovement) / valueForPrevDay;
             result.add(dailyYield);
         }
+        
         return result;
     }
     

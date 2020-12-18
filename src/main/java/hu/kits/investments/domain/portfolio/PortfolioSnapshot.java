@@ -43,7 +43,7 @@ public record PortfolioSnapshot(Map<Asset, Integer> assetsMap, int cash) {
     }
     
     private static BigDecimal getAssetPrice(Asset asset, AssetPrices assetPrices) {
-        return assetPrices.price(asset).orElseThrow(() -> new IllegalArgumentException("Can no find price for " + asset.ticker()));
+        return assetPrices.price(asset).orElseThrow(() -> new IllegalArgumentException("Can not find price for " + asset.ticker()));
     }
     
     @Override

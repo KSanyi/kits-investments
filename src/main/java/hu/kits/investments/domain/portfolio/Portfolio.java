@@ -11,6 +11,7 @@ import java.util.Map;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import hu.kits.investments.common.DateRange;
 import hu.kits.investments.domain.asset.Asset;
 import hu.kits.investments.domain.marketdata.AssetPrices;
 
@@ -92,8 +93,17 @@ public class Portfolio {
         return createSnapshotAt(date).portfolioValue(assetPrices);
     }
     
+    public int netCashMovementAt(LocalDate date) {
+        return cashMovements.stream().filter(c -> c.date().equals(date)).mapToInt(CashMovement::amount).sum();
+    }
+    
+    public int netCashMovementAt(DateRange dateRange) {
+        return cashMovements.stream().filter(c -> dateRange.contains(c.date())).mapToInt(CashMovement::amount).sum();
+    }
+    
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
+
 }

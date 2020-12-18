@@ -20,6 +20,10 @@ public class TimeSeries<T> {
         return effectiveEntryAt != null ? effectiveEntryAt.value : null;
     }
     
+    public T valueAt(LocalDate date) {
+        return dailyValues.get(date);
+    }
+    
     public TimeSeriesEntry<T> effectiveEntryAt(LocalDate date) {
         T value = dailyValues.getOrDefault(date, null);
         for(int i=0;i<10;i++) {

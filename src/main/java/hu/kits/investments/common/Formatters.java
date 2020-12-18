@@ -12,6 +12,7 @@ public class Formatters {
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy.MM.dd");
     private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyy. MMMM dd. HH:mm");
     private static final DecimalFormat DECIMAL_FORMAT;
+    private static final DecimalFormat DECIMAL_FORMAT_2;
     private static final DecimalFormat PERCENT_FORMAT;
     
     public static final Locale HU_LOCALE = new Locale("HU");
@@ -20,6 +21,8 @@ public class Formatters {
         DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols(Locale.US);
         decimalFormatSymbols.setGroupingSeparator(' ');
         DECIMAL_FORMAT = new DecimalFormat("###,###", decimalFormatSymbols);
+        DECIMAL_FORMAT_2 = new DecimalFormat("#.##", decimalFormatSymbols);
+        DECIMAL_FORMAT_2.setMaximumFractionDigits(2);
         PERCENT_FORMAT = new DecimalFormat("0.00%", decimalFormatSymbols);
     }
     
@@ -37,6 +40,10 @@ public class Formatters {
     
     public static String formatDecimal(Number value) {
         return DECIMAL_FORMAT.format(value);
+    }
+    
+    public static String formatFractionalDecimal(Number value) {
+        return DECIMAL_FORMAT_2.format(value);
     }
     
 }

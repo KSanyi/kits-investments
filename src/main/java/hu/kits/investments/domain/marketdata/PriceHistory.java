@@ -132,5 +132,5 @@ public class PriceHistory {
         var dates = dates();
         return new DateRange(dates.get(0), dates.get(dates.size()-1));
     }
-
+    
 }

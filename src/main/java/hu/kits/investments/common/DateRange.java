@@ -73,6 +73,10 @@ public class DateRange implements Comparable<DateRange>, Iterable<LocalDate> {
 	    return (int)Duration.between(from.atStartOfDay(), to.atStartOfDay()).toDays();
 	}
 	
+	public DateRange shiftLeft(int days) {
+	    return new DateRange(from.plusDays(days), to);
+	}
+	
 	@Override
 	public boolean equals(Object other) {
 		if(other == this) return true;

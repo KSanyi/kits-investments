@@ -51,9 +51,9 @@ public class Main {
     
     public static void main(String[] args) throws Exception {
 
-        showCorrelationMatrix();
-        runBacktest1();
-        Asset voo = assets.findByTicker("GOOG");
+        //showCorrelationMatrix();
+        //runBacktest1();
+        Asset voo = assets.findByTicker("VOO");
         priceDataService.fetchAndSavePriceData(voo, LocalDate.of(2019, 7, 27));
     }
     
