@@ -2,7 +2,6 @@ package hu.kits.investments.domain.marketdata;
 
 import static java.util.Collections.emptyMap;
 import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 import java.math.BigDecimal;
@@ -38,11 +37,11 @@ public class PriceHistory {
     }
 
     public List<Asset> assets() {
-        return priceMap.keySet().stream().sorted(comparing(Asset::ticker)).collect(toList());
+        return priceMap.keySet().stream().sorted(comparing(Asset::ticker)).toList();
     }
     
     public List<LocalDate> dates() {
-        return priceMap.values().stream().flatMap(map -> map.keySet().stream()).distinct().sorted().collect(toList());
+        return priceMap.values().stream().flatMap(map -> map.keySet().stream()).distinct().sorted().toList();
     }
     
     public Optional<BigDecimal> findPrice(Asset asset, LocalDate date) {
@@ -65,7 +64,7 @@ public class PriceHistory {
     public List<PriceData> getPriceDatas(Asset asset) {
         return priceMap.getOrDefault(asset, emptyMap()).entrySet().stream()
             .map(e -> new PriceData(asset.ticker(), e.getKey(), e.getValue()))
-            .collect(toList());
+            .toList();
     }
     
     public AssetPrices assetPricesAt(LocalDate date) {

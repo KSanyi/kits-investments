@@ -1,7 +1,5 @@
 package hu.kits.investments.common;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,7 +17,7 @@ public class CollectionsUtil {
     }
     
     public static <T> List<T> concat(List<? extends T> listA, List<? extends T> listB) {
-        return Stream.concat(listA.stream(), listB.stream()).collect(toList());
+        return Stream.concat(listA.stream(), listB.stream()).toList();
     }
     
     public static <S, T> Map<S, T> merge(Map<S, T> map1, Map<S, T> map2) {

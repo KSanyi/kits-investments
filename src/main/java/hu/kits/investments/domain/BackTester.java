@@ -1,7 +1,6 @@
 package hu.kits.investments.domain;
 
 import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toList;
 
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
@@ -58,7 +57,7 @@ public class BackTester {
     private static void executeTradeOrders(Portfolio portfolio, List<TradeOrder> tradeOrders) {
         
         // sell first
-        List<TradeOrder> sortedTradeOrders = tradeOrders.stream().sorted(comparing(TradeOrder::quantity)).collect(toList());
+        List<TradeOrder> sortedTradeOrders = tradeOrders.stream().sorted(comparing(TradeOrder::quantity)).toList();
         
         for(TradeOrder tradeOrder : sortedTradeOrders) {
             portfolio.buy(tradeOrder.date(), tradeOrder.asset(), tradeOrder.quantity(), tradeOrder.unitPrice());

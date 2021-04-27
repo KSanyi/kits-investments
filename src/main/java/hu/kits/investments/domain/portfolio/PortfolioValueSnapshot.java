@@ -10,10 +10,12 @@ import hu.kits.investments.domain.asset.Asset;
 
 public record PortfolioValueSnapshot(Map<Asset, Integer> assetsMap, int cash) {
 
+    /*
     public PortfolioValueSnapshot {
         this.assetsMap = Map.copyOf(assetsMap);
         this.cash = cash;
     }
+    */
 
     public int value(Asset asset) {
         return assetsMap.getOrDefault(asset, 0);

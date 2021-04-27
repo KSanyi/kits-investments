@@ -1,10 +1,9 @@
 package hu.kits.investments.domain.asset;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
+
 import hu.kits.investments.domain.asset.Asset.AssetClass;
 
 public class Assets {
@@ -28,7 +27,7 @@ public class Assets {
     }
 
     public Assets forAssetClass(AssetClass assetClass) {
-        return new Assets(assetList.stream().filter(asset -> asset.assetClass() == assetClass).collect(toList()));
+        return new Assets(assetList.stream().filter(asset -> asset.assetClass() == assetClass).toList());
     }
 
 }

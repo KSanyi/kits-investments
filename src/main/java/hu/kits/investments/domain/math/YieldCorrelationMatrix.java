@@ -3,7 +3,6 @@ package hu.kits.investments.domain.math;
 import static java.util.Collections.emptyMap;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -63,8 +62,8 @@ public class YieldCorrelationMatrix {
         List<Asset> assets = priceHistory.assets();
         Asset asset0 = assets.iterator().next();
         
-        List<LocalDate> priceHistoryDates = priceHistory.getPriceDatas(asset0).stream().map(PriceData::date).collect(toList());
-        if(assets.stream().anyMatch(asset -> !priceHistoryDates.equals(priceHistory.getPriceDatas(asset).stream().map(PriceData::date).collect(toList())))) {
+        List<LocalDate> priceHistoryDates = priceHistory.getPriceDatas(asset0).stream().map(PriceData::date).toList();
+        if(assets.stream().anyMatch(asset -> !priceHistoryDates.equals(priceHistory.getPriceDatas(asset).stream().map(PriceData::date).toList()))) {
             System.out.println(priceHistory.printStats());
             throw new IllegalArgumentException("Price history dates must be the same for all assets");
         }
@@ -91,7 +90,7 @@ public class YieldCorrelationMatrix {
         
         NumberFormat formatter = new DecimalFormat("#0.000");
         
-        List<Asset> assets = matrix.keySet().stream().sorted(comparing(Asset::ticker)).collect(toList());
+        List<Asset> assets = matrix.keySet().stream().sorted(comparing(Asset::ticker)).toList();
         
         StringBuilder sb = new StringBuilder(assets.stream().map(Asset::ticker).collect(joining("\t", " \t", "\n")));
         

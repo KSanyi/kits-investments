@@ -37,7 +37,7 @@ public class OrsiAlapok {
     private static final FXService fxService = new FXService(new FXRateJdbcRepository(dataSource), new NapiArfolyamService());
     private static final FXRates fxRates = fxService.getFXRates();
     
-    private static final LocalDate REF_DATE = parse("2020-11-16");
+    private static final LocalDate REF_DATE = parse("2021-03-16");
     
     public static void main(String[] args) {
         

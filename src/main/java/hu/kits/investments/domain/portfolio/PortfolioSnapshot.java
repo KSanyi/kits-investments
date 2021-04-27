@@ -13,10 +13,12 @@ import hu.kits.investments.domain.marketdata.AssetPrices;
 
 public record PortfolioSnapshot(Map<Asset, Integer> assetsMap, int cash) {
 
+    /*
     public PortfolioSnapshot {
         this.assetsMap = Map.copyOf(assetsMap);
         this.cash = cash;
     }
+    */
 
     public int quantity(Asset asset) {
         return assetsMap.getOrDefault(asset, 0);

@@ -1,7 +1,6 @@
 package hu.kits.investments.infrastructure.database;
 
 import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 import java.lang.invoke.MethodHandles;
@@ -44,7 +43,7 @@ public class PriceDataJdbiRepository implements PriceDataRepository {
     public PriceHistory getPriceHistory(Assets assets) {
         String sql = String.format("SELECT * FROM %s WHERE %s IN (<tickers>)", TABLE_PRICE_DATA, COLUMN_TICKER);
         
-        List<String> tickers = assets.stream().map(Asset::ticker).collect(toList());
+        List<String> tickers = assets.stream().map(Asset::ticker).toList();
         
         List<PriceData> priceDataList = jdbi.withHandle(handle -> 
             handle.createQuery(sql)

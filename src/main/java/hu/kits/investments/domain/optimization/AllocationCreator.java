@@ -1,6 +1,5 @@
 package hu.kits.investments.domain.optimization;
 
-import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,7 +16,7 @@ public class AllocationCreator {
         if(stepPercent > 100 || stepPercent < 0) throw new IllegalArgumentException("Step must be between 0 and 100");
         
         List<Map<Asset, Integer>> allocationMaps = createAllocations(assets, stepPercent, 100);
-        return allocationMaps.stream().map(Allocation::new).collect(toList());
+        return allocationMaps.stream().map(Allocation::new).toList();
     }
     
     private static List<Map<Asset, Integer>> createAllocations(List<Asset> assets, int stepPercent, int sum) {
@@ -44,7 +43,7 @@ public class AllocationCreator {
     }
     
     private static List<Map<Asset, Integer>> addEntryToAllocations(List<Map<Asset, Integer>> allocations, Asset asset, int weight) {
-        return allocations.stream().map(m -> add(m, asset, weight)).collect(toList());
+        return allocations.stream().map(m -> add(m, asset, weight)).toList();
     }
     
     private static Map<Asset, Integer> add(Map<Asset, Integer> map, Asset asset, int weight) {

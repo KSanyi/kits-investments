@@ -1,7 +1,6 @@
 package hu.kits.investments.domain.investment.strategy;
 
 import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 import java.math.BigDecimal;
@@ -84,7 +83,7 @@ public class ConstantAllocation implements InvestmentStrategy {
         
         return allocation.assets().stream()
                 .map(asset -> createTradeOrder(startDate, asset, allocation.weightOf(asset) / 100.0, assetPrices, cash))
-                .collect(toList());
+                .toList();
     }
     
     private static TradeOrder createTradeOrder(LocalDate date, Asset asset, double weight, AssetPrices assetPrices, int cash) {
