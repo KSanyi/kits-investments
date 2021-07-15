@@ -1,6 +1,9 @@
 package hu.kits.investments.domain.portfolio;
 
+import static java.util.stream.Collectors.joining;
+
 import java.util.List;
+import java.util.Map;
 
 import hu.kits.investments.common.Formatters;
 import hu.kits.investments.domain.TimeSeries.TimeSeriesEntry;
@@ -15,7 +18,8 @@ public record PortfolioStats(
         double volatility,
         double sharpeRatio,
         TimeSeriesEntry<Integer> high,
-        TimeSeriesEntry<Integer> low) {
+        TimeSeriesEntry<Integer> low,
+        Map<Integer, Double> recentMonthsPerformance) {
 
     @Override
     public String toString() {
@@ -30,7 +34,15 @@ public record PortfolioStats(
                "volatility: " + Formatters.formatPercent(volatility),
                "Sharp ratio: " + Formatters.formatFractionalDecimal(sharpeRatio),
                "high: " + high.date() + ": " + Formatters.formatDecimal(high.value()), 
-               "low: " + low.date() + ": " + Formatters.formatDecimal(low.value())));
+               "low: " + low.date() + ": " + Formatters.formatDecimal(low.value()),
+               "recent months performance: " + printRecentMonthsPerformance()));
+    }
+    
+    private String printRecentMonthsPerformance() {
+        return recentMonthsPerformance.keySet().stream()
+            .sorted()
+            .map(month -> month + ": " + Formatters.formatPercent(recentMonthsPerformance.get(month)))
+            .collect(joining(", "));
     }
     
 }

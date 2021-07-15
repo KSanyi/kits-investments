@@ -1,7 +1,5 @@
 package hu.kits.investments.domain;
 
-import static java.util.Comparator.comparing;
-
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
 import java.util.List;
@@ -17,6 +15,7 @@ import hu.kits.investments.domain.portfolio.PortfolioSnapshot;
 import hu.kits.investments.domain.portfolio.PortfolioStats;
 import hu.kits.investments.domain.portfolio.PortfolioStatsCreator;
 import hu.kits.investments.domain.portfolio.TradeOrder;
+import hu.kits.investments.domain.portfolio.TradeOrder.Side;
 
 public class BackTester {
 
@@ -56,12 +55,25 @@ public class BackTester {
 
     private static void executeTradeOrders(Portfolio portfolio, List<TradeOrder> tradeOrders) {
         
-        // sell first
-        List<TradeOrder> sortedTradeOrders = tradeOrders.stream().sorted(comparing(TradeOrder::quantity)).toList();
+        List<TradeOrder> sellOrders = tradeOrders.stream()
+                .filter(order -> order.side() == Side.SELL)
+                .filter(order -> order.quantity() > 0)
+                .toList();
         
-        for(TradeOrder tradeOrder : sortedTradeOrders) {
+        for(TradeOrder tradeOrder : sellOrders) {
+            portfolio.sell(tradeOrder.date(), tradeOrder.asset(), tradeOrder.quantity(), tradeOrder.unitPrice());
+        }
+        
+        List<TradeOrder> buyOrders = tradeOrders.stream()
+                .filter(order -> order.side() == Side.BUY)
+                .filter(order -> order.quantity() > 0)
+                .toList();
+        
+        
+        for(TradeOrder tradeOrder : buyOrders) {
             portfolio.buy(tradeOrder.date(), tradeOrder.asset(), tradeOrder.quantity(), tradeOrder.unitPrice());
         }
+        
     }
     
 }

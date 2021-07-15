@@ -4,6 +4,7 @@ import static java.time.LocalDate.parse;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -15,7 +16,6 @@ import hu.kits.investments.domain.asset.AssetRepository;
 import hu.kits.investments.domain.asset.Assets;
 import hu.kits.investments.domain.marketdata.PriceDataRepository;
 import hu.kits.investments.domain.marketdata.PriceHistory;
-import hu.kits.investments.domain.marketdata.fx.FXRates;
 import hu.kits.investments.domain.marketdata.fx.FXService;
 import hu.kits.investments.domain.math.MathUtil;
 import hu.kits.investments.domain.portfolio.Portfolio;
@@ -26,6 +26,7 @@ import hu.kits.investments.domain.portfolio.PortfolioValueSnapshot;
 import hu.kits.investments.infrastructure.database.AssetJdbiRepository;
 import hu.kits.investments.infrastructure.database.FXRateJdbcRepository;
 import hu.kits.investments.infrastructure.database.PriceDataJdbiRepository;
+import hu.kits.investments.infrastructure.marketdata.bamosz.BamoszImporter;
 import hu.kits.investments.infrastructure.marketdata.fx.NapiArfolyamService;
 
 public class OrsiAlapok {
@@ -35,13 +36,14 @@ public class OrsiAlapok {
     private static final AssetRepository assetRepository = new AssetJdbiRepository(dataSource);
     private static final Assets assets = assetRepository.loadAssets();
     private static final FXService fxService = new FXService(new FXRateJdbcRepository(dataSource), new NapiArfolyamService());
-    private static final FXRates fxRates = fxService.getFXRates();
+    private static final BamoszImporter bamoszImporter = new BamoszImporter();
     
-    private static final LocalDate REF_DATE = parse("2021-03-16");
+    private static final LocalDate REF_DATE = parse("2021-07-06");
     
     public static void main(String[] args) {
         
         fxService.downloadDailyFxRates();
+        bamoszImporter.downloadMutualFundData();
         
         //run("AEG_N_KOT", parse("2020-07-02"), 1_924_974);
         //run("BF_MON_FEJ", parse("2020-07-03"), 2_970_295);
@@ -94,6 +96,15 @@ public class OrsiAlapok {
         System.out.println(portfolioSnapshot);
         System.out.println(portfolioValueSnapshot);
         System.out.println(portfolioStats);
+        
+        for(Asset asset : List.of(asset2, asset3, asset4, asset5, asset6)) {
+            portfolio = new Portfolio();
+            LocalDate date = parse("2019-12-31");
+            portfolio.deposit(date, 1_000_000);
+            buyForAmount(portfolio, asset, date, 1_000_000, priceHistory);
+            portfolioStats = PortfolioStatsCreator.createPortfolioStats(portfolio, priceHistory);
+            System.out.println(asset.name() + " stats: " + portfolioStats);
+        }
     }
     
     private static void runVOO() {

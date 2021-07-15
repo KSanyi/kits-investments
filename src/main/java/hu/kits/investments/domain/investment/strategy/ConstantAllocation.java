@@ -19,6 +19,7 @@ import hu.kits.investments.domain.math.MathUtil;
 import hu.kits.investments.domain.portfolio.PortfolioSnapshot;
 import hu.kits.investments.domain.portfolio.PortfolioValueSnapshot;
 import hu.kits.investments.domain.portfolio.TradeOrder;
+import hu.kits.investments.domain.portfolio.TradeOrder.Side;
 
 public class ConstantAllocation implements InvestmentStrategy {
 
@@ -54,8 +55,10 @@ public class ConstantAllocation implements InvestmentStrategy {
                 int currentValue = currentPortfolioValueSnapshot.value(asset);
                 BigDecimal price = assetPrices.price(asset).get();
                 int diffQuantity = MathUtil.divideRound(targetValue - currentValue, price).intValue();
-                if(diffQuantity != 0) {
-                    tradeOrders.add(new TradeOrder(date, asset, diffQuantity, price));
+                if(diffQuantity > 0) {
+                    tradeOrders.add(new TradeOrder(date, asset, Side.BUY, diffQuantity, price));
+                } else if(diffQuantity < 0) {
+                    tradeOrders.add(new TradeOrder(date, asset, Side.SELL, -diffQuantity, price));
                 }
             }
             return tradeOrders;
@@ -91,7 +94,7 @@ public class ConstantAllocation implements InvestmentStrategy {
         BigDecimal unitPrice = assetPrices.price(asset).orElseThrow(() -> new IllegalArgumentException("Can not find price for " + asset.ticker() + " for " + date));
         int quantity = MathUtil.divideRound(cash * weight, unitPrice).intValue();
         
-        return new TradeOrder(date, asset, quantity, unitPrice);
+        return new TradeOrder(date, asset, Side.BUY, quantity, unitPrice);
     }
     
     @Override

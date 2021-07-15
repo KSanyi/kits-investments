@@ -12,6 +12,7 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -27,6 +28,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import hu.kits.investments.common.CollectionsUtil;
 import hu.kits.investments.domain.asset.Currency;
 import hu.kits.investments.domain.marketdata.fx.FXRateWebService;
 import hu.kits.investments.domain.marketdata.fx.FXRates.FXRate;
@@ -43,6 +45,13 @@ public class NapiArfolyamService implements FXRateWebService {
     
     @Override
     public List<FXRate> getDailyFXRates(LocalDate from, LocalDate to) {
+        
+        if(ChronoUnit.DAYS.between(from, to) > 30) {
+            
+            List<FXRate> rates = getDailyFXRates(from, from.plusDays(30));
+            List<FXRate> rest = getDailyFXRates(from.plusDays(31), to);
+            return CollectionsUtil.concat(rates, rest);
+        }
         
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .GET()

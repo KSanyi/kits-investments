@@ -104,7 +104,7 @@ public class PortfolioTest {
         portfolio.buy(parse("2020-09-01"), AAPL, 10, new BigDecimal(500));
         portfolio.buy(parse("2020-09-01"), AMZN, 20, new BigDecimal(200));
 
-        portfolio.buy(parse("2020-09-02"), AMZN, -10, new BigDecimal(300));
+        portfolio.sell(parse("2020-09-02"), AMZN, 10, new BigDecimal(300));
         portfolio.buy(parse("2020-09-02"), AAPL,   5, new BigDecimal(400));
         
         assertEquals(new PortfolioSnapshot(Map.of(AAPL, 10, AMZN, 20), 1_000), portfolio.createSnapshotAt(parse("2020-09-01")));

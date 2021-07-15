@@ -32,10 +32,10 @@ public class PortfolioStatsCreator {
         TimeSeriesEntry<Integer> end = valueHistory.lastEntry();
         
         double yield = (end.value() - start.value()) / (double)start.value();
-        double annualYield = annualize(yield, start, end);
+        double annualYield = annualize(yield, start.date(), end.date());
         
         double twr = calculateTwr(portfolio, valueHistory);
-        double annualTwr = annualize(twr, start, end);
+        double annualTwr = annualize(twr, start.date(), end.date());
         
         List<Double> dailyYields = calculateDailyYields(portfolio, priceHistory);
         double volatility = KitsStat.stDev(dailyYields) * Math.sqrt(250);
@@ -45,12 +45,34 @@ public class PortfolioStatsCreator {
         TimeSeriesEntry<Integer> high = findHigh(valueHistory);
         TimeSeriesEntry<Integer> low = findLow(valueHistory);
         
-        return new PortfolioStats(start, end, yield, annualYield, twr, annualTwr, volatility, sharpRatio, high, low);
+        Map<Integer, Double> recentMonthsPerformance = calculateRecentMonthsPerformance(valueHistory);
+        
+        return new PortfolioStats(start, end, yield, annualYield, twr, annualTwr, volatility, sharpRatio, high, low, recentMonthsPerformance);
     }
     
-    private static double annualize(double yield, TimeSeriesEntry<Integer> start, TimeSeriesEntry<Integer> end) {
+    private static Map<Integer, Double> calculateRecentMonthsPerformance(TimeSeries<Integer> valueHistory) {
+        return List.of(1, 6, 12).stream()
+                .collect(toMap(month -> month, month -> calculateRecentMonthsPerformance(month, valueHistory)));
+    }
+
+    private static double calculateRecentMonthsPerformance(int month, TimeSeries<Integer> valueHistory) {
         
-        long days = ChronoUnit.DAYS.between(start.date(), end.date());
+        LocalDate lastDate = valueHistory.lastEntry().date();
+        double lastValue = valueHistory.effectiveValueAt(lastDate);
+        LocalDate referenceDate = lastDate.minusMonths(month);
+        Integer referenceValue = valueHistory.effectiveValueAt(referenceDate);
+        
+        if(referenceValue != null) {
+            double yield = (lastValue - referenceValue) / (double)referenceValue;
+            return annualize(yield, referenceDate, lastDate);
+        } else {
+            return 0;
+        }
+    }
+    
+    private static double annualize(double yield, LocalDate start, LocalDate end) {
+        
+        long days = ChronoUnit.DAYS.between(start, end);
         return Math.pow(1 + yield, 365.0 / days) - 1;
     }
     

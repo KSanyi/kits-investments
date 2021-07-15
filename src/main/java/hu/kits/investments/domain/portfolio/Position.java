@@ -16,7 +16,7 @@ public record Position(Asset asset, int quantity) {
             throw new IllegalArgumentException("Can not update with a trade order with different asset");
         }
         
-        return new Position(asset, quantity + tradeOrder.quantity());
+        return new Position(asset, quantity + tradeOrder.signedQuantity());
     }
     
     Position combine(Position position) {

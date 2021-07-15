@@ -53,8 +53,12 @@ public class Main {
 
         //showCorrelationMatrix();
         //runBacktest1();
-        Asset voo = assets.findByTicker("VOO");
-        priceDataService.fetchAndSavePriceData(voo, LocalDate.of(2019, 7, 27));
+        //Asset voo = assets.findByTicker("VOO");
+        //priceDataService.fetchAndSavePriceData(voo, LocalDate.of(2019, 7, 27));
+        
+        //runBacktest1();
+        
+        runBacktest2();
     }
     
     private static void fetchPriceData() throws IOException {

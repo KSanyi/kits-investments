@@ -11,13 +11,12 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 import hu.kits.investments.common.DateRange;
+import hu.kits.investments.domain.TimeSeries.TimeSeriesEntry;
 import hu.kits.investments.domain.investment.Allocation;
 import hu.kits.investments.domain.investment.strategy.BuyAndHold;
 import hu.kits.investments.domain.investment.strategy.InvestmentStrategy;
 import hu.kits.investments.domain.investment.strategy.NeverInvest;
 import hu.kits.investments.domain.marketdata.PriceHistory;
-
-import hu.kits.investments.domain.TimeSeries.TimeSeriesEntry;
 
 public class BackTestTest {
 
@@ -50,7 +49,7 @@ public class BackTestTest {
         
         TimeSeriesEntry<Integer> entry = backTester.run(strategy, dateRange).end();
         
-        //assertEquals(1_150_000, entry.value());
+        assertEquals(1_150_000, entry.value());
     }
     
     @Test
@@ -64,7 +63,7 @@ public class BackTestTest {
         
         TimeSeriesEntry<Integer> entry = backTester.run(strategy, dateRange).end();
         
-        //assertEquals(950_000, entry.value());
+        assertEquals(950_000, entry.value());
     }
     
     @Test
@@ -78,7 +77,7 @@ public class BackTestTest {
         
         TimeSeriesEntry<Integer> entry = backTester.run(strategy, dateRange).end();
         
-        //assertEquals(1_000_000, entry.value());
+        assertEquals(1_000_000, entry.value());
     }
     
 }

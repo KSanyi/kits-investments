@@ -46,13 +46,18 @@ public class BamoszImporter {
     private static final String BASE_URL = "https://www.bamosz.hu/bamosz-public-alapoldal-portlet/kuka.download?separator=pontosvesszo&isin=";
     
     public static void main(String[] args) throws Exception {
-
+        new BamoszImporter().downloadMutualFundData();
+        
+    }
+    
+    public void downloadMutualFundData() {
         Map<Asset, Integer> assetSavedMap = assets.forAssetClass(AssetClass.MUTUAL_FUND).stream().collect(toMap(
                 asset -> asset,
                 asset -> importBamoszData(asset)));
         
         assetSavedMap.forEach((asset, entriesSaved) -> logger.info("{}: {}", asset.name(), entriesSaved + " entries saved"));
     }
+    
     
     private static int importBamoszData(Asset asset) {
         

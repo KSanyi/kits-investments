@@ -13,6 +13,7 @@ import hu.kits.investments.domain.marketdata.PriceHistory;
 import hu.kits.investments.domain.math.MathUtil;
 import hu.kits.investments.domain.portfolio.PortfolioSnapshot;
 import hu.kits.investments.domain.portfolio.TradeOrder;
+import hu.kits.investments.domain.portfolio.TradeOrder.Side;
 
 public class BuyAndHold implements InvestmentStrategy {
 
@@ -42,7 +43,7 @@ public class BuyAndHold implements InvestmentStrategy {
         BigDecimal unitPrice = assetPrices.price(asset).orElseThrow(() -> new IllegalArgumentException("Can not find price for " + asset.ticker() + " for " + date));
         int quantity = MathUtil.divideRound(cash * weight, unitPrice).intValue();
         
-        return new TradeOrder(date, asset, quantity, unitPrice);
+        return new TradeOrder(date, asset, Side.BUY, quantity, unitPrice);
     }
     
     @Override

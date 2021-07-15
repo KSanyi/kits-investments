@@ -14,6 +14,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import hu.kits.investments.common.DateRange;
 import hu.kits.investments.domain.asset.Asset;
 import hu.kits.investments.domain.marketdata.AssetPrices;
+import hu.kits.investments.domain.portfolio.TradeOrder.Side;
 
 public class Portfolio {
 
@@ -36,7 +37,7 @@ public class Portfolio {
         
         int netTradeCashMovements = tradeOrders.stream()
             .filter(tradeOrder -> !tradeOrder.date().isAfter(date))
-            .mapToInt(TradeOrder::value)
+            .mapToInt(TradeOrder::signedValue)
             .sum();
         
         int netCashMovements = cashMovements.stream()
@@ -60,15 +61,20 @@ public class Portfolio {
     
     public void buy(LocalDate date, Asset asset, int quantity, BigDecimal unitPrice) {
         
+        if(quantity <= 0) throw new IllegalArgumentException("Quantity must be positive: " + quantity);
+        
         BigDecimal value = unitPrice.multiply(new BigDecimal(quantity));
         
-        if(cashAt(date) + 100 < value.intValue()) throw new IllegalStateException("No " + value + " USD cash in portfolio");
-        tradeOrders.add(new TradeOrder(date, asset, quantity, unitPrice));
+        if(cashAt(date) + 200 < value.intValue()) throw new IllegalStateException("No " + value + " USD cash in portfolio, only " + cashAt(date));
+        tradeOrders.add(new TradeOrder(date, asset, Side.BUY, quantity, unitPrice));
     }
     
     public void sell(LocalDate date, Asset asset, int quantity, BigDecimal unitPrice) {
+        
+        if(quantity <= 0) throw new IllegalArgumentException("Quantity must be positive: " + quantity);
+        
         if(quantityAt(asset, date) < quantity) throw new IllegalStateException("No " + quantity + " " + asset + " in portfolio");
-        tradeOrders.add(new TradeOrder(date, asset, -quantity, unitPrice));
+        tradeOrders.add(new TradeOrder(date, asset, Side.SELL, quantity, unitPrice));
     }
     
     public PortfolioSnapshot createSnapshot() {
