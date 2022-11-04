@@ -38,7 +38,7 @@ public class OrsiAlapok {
     private static final FXService fxService = new FXService(new FXRateJdbcRepository(dataSource), new NapiArfolyamService());
     private static final BamoszImporter bamoszImporter = new BamoszImporter();
     
-    private static final LocalDate REF_DATE = parse("2021-07-06");
+    private static final LocalDate REF_DATE = parse("2022-09-06");
     
     public static void main(String[] args) {
         
@@ -166,7 +166,7 @@ public class OrsiAlapok {
     
     private static DataSource createDataSource() {
         String username = "root";
-        String password = "abcd1234";
+        String password = "Alma1234";
         String jdbcUrl = "jdbc:mysql://localhost/kits-investments?autoReconnect=true&useSSL=false"; 
         
         MysqlDataSource dataSource = new MysqlDataSource();

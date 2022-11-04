@@ -1,5 +1,7 @@
 package hu.kits.investments;
 
+import static java.time.LocalDate.of;
+
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
@@ -29,7 +31,7 @@ import hu.kits.investments.domain.marketdata.PriceDataService;
 import hu.kits.investments.domain.marketdata.PriceDataSource;
 import hu.kits.investments.domain.marketdata.PriceHistory;
 import hu.kits.investments.domain.marketdata.fx.FXRateRepository;
-import hu.kits.investments.domain.math.YieldCorrelationMatrix;
+import hu.kits.investments.domain.math.CorrelationMatrix;
 import hu.kits.investments.domain.optimization.AllocationCreator;
 import hu.kits.investments.domain.portfolio.PortfolioStats;
 import hu.kits.investments.infrastructure.database.AssetJdbiRepository;
@@ -53,8 +55,8 @@ public class Main {
 
         //showCorrelationMatrix();
         //runBacktest1();
-        //Asset voo = assets.findByTicker("VOO");
-        //priceDataService.fetchAndSavePriceData(voo, LocalDate.of(2019, 7, 27));
+        Asset voo = assets.findByTicker("VOO");
+        priceDataService.fetchAndSavePriceData(voo, LocalDate.of(2019, 7, 27));
         
         //runBacktest1();
         
@@ -79,7 +81,7 @@ public class Main {
         Assets assets = Assets.of(goog, nflx, msft, aapl, cof);
         PriceHistory priceHistory = priceDataService.getPriceHistory(assets).in(new DateRange(LocalDate.of(2010, 1, 1), LocalDate.of(2020,1,1)));
         
-        System.out.println(YieldCorrelationMatrix.create(priceHistory));
+        System.out.println(CorrelationMatrix.create(priceHistory));
     }
     
     private static void runBacktest1() {
@@ -88,11 +90,11 @@ public class Main {
         Asset asset2 = assets.findByTicker("NFLX");
         
         PriceHistory priceHistory = priceDataService.getPriceHistory(Assets.of(asset1, asset2))
-                .in(new DateRange(LocalDate.of(2010, 1, 1), LocalDate.of(2018,12,31)));
+                .in(new DateRange(of(2010, 1, 1), of(2018,12,31)));
         
         BackTester backTester = new BackTester(priceHistory);
         
-        DateRange dateRange = new DateRange(LocalDate.of(2010, 1, 4), LocalDate.of(2018,12,31));
+        DateRange dateRange = new DateRange(of(2010, 1, 4), of(2018,12,31));
         
         InvestmentStrategy buyAndHoldStrategy = new BuyAndHold(new Allocation(Map.of(asset1, 50, asset2, 50)));
         PortfolioStats buyAndHoldPortfolioStats = backTester.run(buyAndHoldStrategy, dateRange);
@@ -112,13 +114,13 @@ public class Main {
         Asset asset1 = assets.findByTicker("GOOG");
         Asset asset2 = assets.findByTicker("NFLX");
         
-        PriceHistory priceHistory = priceDataService.getPriceHistory(Assets.of(asset1, asset2)).in(new DateRange(LocalDate.of(2010, 1, 1), LocalDate.of(2018,12,31)));
+        PriceHistory priceHistory = priceDataService.getPriceHistory(Assets.of(asset1, asset2)).in(new DateRange(of(2010, 1, 1), of(2018,12,31)));
         
         BackTester backTester = new BackTester(priceHistory);
         
         List<Allocation> allocations = AllocationCreator.createAllocations(List.of(asset1, asset2), 10);
         
-        DateRange dateRange = new DateRange(LocalDate.of(2010, 1, 4), LocalDate.of(2018,12,31));
+        DateRange dateRange = new DateRange(of(2010, 1, 4), of(2018,12,31));
         
         for(Allocation allocation : allocations) {
             InvestmentStrategy strategy = new BuyAndHold(allocation);
@@ -129,7 +131,7 @@ public class Main {
     
     private static DataSource createDataSource() {
         String username = "root";
-        String password = "abcd1234";
+        String password = "Alma1234";
         String jdbcUrl = "jdbc:mysql://localhost/kits-investments?autoReconnect=true&useSSL=false"; 
         
         MysqlDataSource dataSource = new MysqlDataSource();

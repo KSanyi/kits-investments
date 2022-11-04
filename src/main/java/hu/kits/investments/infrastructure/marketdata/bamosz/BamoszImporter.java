@@ -109,7 +109,7 @@ public class BamoszImporter {
     
     private static DataSource createDataSource() {
         String username = "root";
-        String password = "abcd1234";
+        String password = "Alma1234";
         String jdbcUrl = "jdbc:mysql://localhost/kits-investments?autoReconnect=true&useSSL=false"; 
         
         MysqlDataSource dataSource = new MysqlDataSource();
