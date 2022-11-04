@@ -15,6 +15,7 @@ import hu.kits.investments.domain.TimeSeries;
 import hu.kits.investments.domain.TimeSeries.TimeSeriesEntry;
 import hu.kits.investments.domain.marketdata.PriceHistory;
 import hu.kits.investments.domain.math.KitsStat;
+import hu.kits.investments.domain.portfolio.PortfolioStats.VaRAndES;
 
 public class PortfolioStatsCreator {
 
@@ -42,12 +43,16 @@ public class PortfolioStatsCreator {
         
         double sharpRatio = (twr - RISK_FREE_RETURN) / volatility;
         
+        VaRAndES varAndES95 = VaRCalculator.calculateVaRAndES(dailyYields, 95);
+        VaRAndES varAndES99 = VaRCalculator.calculateVaRAndES(dailyYields, 99);
+        
         TimeSeriesEntry<Integer> high = findHigh(valueHistory);
         TimeSeriesEntry<Integer> low = findLow(valueHistory);
         
         Map<Integer, Double> recentMonthsPerformance = calculateRecentMonthsPerformance(valueHistory);
         
-        return new PortfolioStats(start, end, yield, annualYield, twr, annualTwr, volatility, sharpRatio, high, low, recentMonthsPerformance);
+        return new PortfolioStats(start, end, yield, annualYield, twr, annualTwr, volatility, sharpRatio, 
+                varAndES95, varAndES99, high, low, recentMonthsPerformance);
     }
     
     private static Map<Integer, Double> calculateRecentMonthsPerformance(TimeSeries<Integer> valueHistory) {
@@ -123,5 +128,6 @@ public class PortfolioStatsCreator {
     private static TimeSeriesEntry<Integer> findLow(TimeSeries<Integer> valueHistory) {
         return valueHistory.stream().min(comparing(TimeSeriesEntry::value)).get();
     }
+    
     
 }

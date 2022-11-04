@@ -31,7 +31,6 @@ import hu.kits.investments.domain.marketdata.PriceDataService;
 import hu.kits.investments.domain.marketdata.PriceDataSource;
 import hu.kits.investments.domain.marketdata.PriceHistory;
 import hu.kits.investments.domain.marketdata.fx.FXRateRepository;
-import hu.kits.investments.domain.math.CorrelationMatrix;
 import hu.kits.investments.domain.optimization.AllocationCreator;
 import hu.kits.investments.domain.portfolio.PortfolioStats;
 import hu.kits.investments.infrastructure.database.AssetJdbiRepository;
@@ -80,8 +79,6 @@ public class Main {
         
         Assets assets = Assets.of(goog, nflx, msft, aapl, cof);
         PriceHistory priceHistory = priceDataService.getPriceHistory(assets).in(new DateRange(LocalDate.of(2010, 1, 1), LocalDate.of(2020,1,1)));
-        
-        System.out.println(CorrelationMatrix.create(priceHistory));
     }
     
     private static void runBacktest1() {

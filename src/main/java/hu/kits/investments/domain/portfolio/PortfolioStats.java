@@ -17,6 +17,8 @@ public record PortfolioStats(
         double annualTwr,
         double volatility,
         double sharpeRatio,
+        VaRAndES varAndES95,
+        VaRAndES varAndES99,
         TimeSeriesEntry<Integer> high,
         TimeSeriesEntry<Integer> low,
         Map<Integer, Double> recentMonthsPerformance) {
@@ -33,6 +35,10 @@ public record PortfolioStats(
                "annual TWR: " + Formatters.formatPercent(annualTwr),
                "volatility: " + Formatters.formatPercent(volatility),
                "Sharp ratio: " + Formatters.formatFractionalDecimal(sharpeRatio),
+               "VaR 95: " + Formatters.formatFractionalDecimal(varAndES95.var),
+               "ES 95: " + Formatters.formatFractionalDecimal(varAndES95.es),
+               "VaR 99: " + Formatters.formatFractionalDecimal(varAndES99.var),
+               "ES 99: " + Formatters.formatFractionalDecimal(varAndES99.es),
                "high: " + high.date() + ": " + Formatters.formatDecimal(high.value()), 
                "low: " + low.date() + ": " + Formatters.formatDecimal(low.value()),
                "recent months performance: " + printRecentMonthsPerformance()));
@@ -44,5 +50,7 @@ public record PortfolioStats(
             .map(month -> month + ": " + Formatters.formatPercent(recentMonthsPerformance.get(month)))
             .collect(joining(", "));
     }
+    
+    public static record VaRAndES(double var, double es) {}
     
 }
